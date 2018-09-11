@@ -3,14 +3,14 @@
  *
  * Created: 5/31/2017 11:39:17 AM
  *  Author: Gerald
- */ 
+ */
 
 
 #ifndef CNTRL_DISCRETE_IO_H_
 #define CNTRL_DISCRETE_IO_H_
 
 /*Motor DIR (OUTPUT), PB23*/
-#define MOTOR_DIR					  PIN_PB23			
+#define MOTOR_DIR					  PIN_PB23
 #define MOTOR_DIR_ACTIVE              true
 #define MOTOR_DIR_INACTIVE            !MOTOR_DIR_ACTIVE
 #define MOTOR_DIR_NAME                "MOTOR DIR PB23"
@@ -39,11 +39,11 @@
 #define MCU_SWITCH_STATUS_INACTIVE   !MCU_SWITCH_STATUS_ACTIVE
 #define MCU_SWITCH_STATUS_NAME       "MCU_SWITCH_STATUS PB00"
 
-/*Fan Output (OUTPUT), PB01*/
-#define FAN_OUTPUT_STATUS			 PIN_PB01
-#define FAN_OUTPUT_STATUS_ACTIVE     true
-#define FAN_OUTPUT_STATUS_INACTIVE   !FAN_OUTPUT_STATUS_ACTIVE
-#define FAN_OUTPUT_STATUS_NAME       "FAN_OUTPUT_STATUS PB00"
+///*Fan Output (OUTPUT), PB01*/						// lmp rmv - this is not in the BETA version
+//#define FAN_OUTPUT_STATUS			 PIN_PB01
+//#define FAN_OUTPUT_STATUS_ACTIVE     true
+//#define FAN_OUTPUT_STATUS_INACTIVE   !FAN_OUTPUT_STATUS_ACTIVE
+//#define FAN_OUTPUT_STATUS_NAME       "FAN_OUTPUT_STATUS PB00"
 
 /*forward decelerations*/
 void init_DisreteIO(void);

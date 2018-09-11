@@ -3,7 +3,7 @@
  *
  * Created: 3/15/2017 12:03:48 PM
  *  Author: Gerald
- */ 
+ */
 
  #include "cntrl_PWM.h"
 
@@ -27,7 +27,7 @@ void configure_tcc(void)
 	config_tcc.compare.wave_generation = TCC_WAVE_GENERATION_SINGLE_SLOPE_PWM; /*sets the waveform mode*/
 
 	/* do some math here ...*/
-	//GCLK_1 = 48 Mhz,  TCC_Prescaler = 1, Period = 2^12 = 4096 
+	//GCLK_1 = 48 Mhz,  TCC_Prescaler = 1, Period = 2^12 = 4096
 	//thus, PWM freq = 48E6/1/4096 = 11.718 Hz.
 	/*this ratio sets the initial duty cycle*/
 	config_tcc.compare.match[CONF_PWM_CHANNEL] = (0);	/*this is modified upon call to xTask_PWM*/
@@ -41,13 +41,13 @@ void configure_tcc(void)
     /*      PWM_CHANNEL = 1 OUTPUT only on WO[1] or WO [5]. */
     /*      PWM_CHANNEL = 2 OUTPUT only on WO[2] or WO [6]. */
 	/*      PWM_CHANNEL = 3 OUTPUT only on WO[3] or WO [7]. */
-	
+
 	config_tcc.pins.wave_out_pin[CONF_PWM_OUTPUT]        = CONF_PWM_OUT_PIN;
 	config_tcc.pins.wave_out_pin_mux[CONF_PWM_OUTPUT]    = CONF_PWM_OUT_MUX;
 
 	/*initialize the module*/
 	tcc_init(&tcc_instance, CONF_PWM_MODULE, &config_tcc);
-	
+
 	/*go ahead an enable tcc*/
 	tcc_set_compare_value(&tcc_instance,CONF_PWM_CHANNEL, 0);
 	tcc_enable(&tcc_instance);
@@ -55,7 +55,7 @@ void configure_tcc(void)
 	/* create the queue for PWM message, this has to be the size of the command typedef pwm_cmd_t */
 	xPwmQHndle = xQueueCreate(PWM_RTOS_CMD_QUEUE_LEN , sizeof(pwm_cmd_t));
 
-}//end configure_tcc 
+}//end configure_tcc
 
 
 /**
@@ -71,7 +71,7 @@ void pwm_set_duty(uint16_t duty){
 	}else {
 		period = duty * (uint16_t) (USER_PWM_PERIOD / 100);
 	}//
-	
+
 	printf("!! pwm_set_duty - Duty %d, Period %d \r\n", duty, period);
 	tcc_set_compare_value(&tcc_instance,CONF_PWM_CHANNEL, period);
 
@@ -107,10 +107,10 @@ void xTaskPwm(void *pvParameters)
 				     printf("!! xTaskPwm OFF - uxDuty %d, on/off %d \r\n", xPwmCmd.uxDuty, xPwmCmd.uxOffOn);
 			         /* disable the channel, and zero the duty cycle */
 			         //tcc_disable(&tcc_instance);
-			         pwm_set_duty(0);					 						
+			         pwm_set_duty(0);
 			   }//end if xPwmCmd.uxOffOn
 			}//end if xPwmCmd.uxChId
-		   			
+
 		}//end if xQueueReceive
 
 	}//end for
