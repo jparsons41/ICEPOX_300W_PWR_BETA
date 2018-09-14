@@ -1,17 +1,28 @@
 /*
- * cntrl_BLDC_CONTROLLER.h
+ * cntrl_MOTOR.h
  *
- * Created: 9/11/2018 13:19:20
+ * Created: 9/14/2018 13:58:22
  *  Author: lphillips
  */
 
 
-#ifndef CNTRL_BLDC_CONTROLLER_H_
-#define CNTRL_BLDC_CONTROLLER_H_
+#ifndef CNTRL_MOTOR_H_
+#define CNTRL_MOTOR_H_
 
 
 
 #include <asf.h>
+/* FreeRTOS includes. */
+#include "FreeRTOS.h"
+#include "task.h"
+#include "timers.h"
+#include "queue.h"
+#include "semphr.h"
+
+
+
+#define MOTOR_WRITE_CONFIG_ENABLED 1
+#define BLDC_CFG_LEN  31
 
 
 #  define CONF_SPI_MASTER_ENABLE  true	// these are asf MACROs for using master/slave
@@ -26,10 +37,11 @@
 #define BLDC_PINMUX_PAD3 PINMUX_PA19C_SERCOM1_PAD3
 
 
-extern void bldc_controller_config(void);
-extern void bldc_controller_set_cfg(void);
-extern void bldc_controller_send_msg(uint8_t*, uint32_t);
+
+extern void motor_set_torque(uint16_t);  // 10 bit value
+extern void motor_config(void);
+extern void motor_task(void*);
 
 
 
-#endif /* CNTRL_BLDC_CONTROLLER_H_ */
+#endif /* CNTRL_MOTOR_H_ */

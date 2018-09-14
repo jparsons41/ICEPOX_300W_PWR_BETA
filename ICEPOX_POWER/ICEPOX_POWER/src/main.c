@@ -52,7 +52,7 @@
  #include "cntrl_I2C_DAC.h"
  #include "cntrl_EXTINT.h"
  #include "cntrl_CONTROL_LOOP.h"
- #include "cntrl_BLDC_CONTROLLER.h"
+ #include "cntrl_MOTOR.h"
 
  /*-----------------------------------------------------------*/
  /*				     FORWARD DECLERATIONS                     */
@@ -121,8 +121,7 @@ static void prvSetupHardware( void )
 	puts(STRING_HEADER);
 
 	#if (BLDC_CONTROLLER_SET_CONFIGS)
-		bldc_controller_config();
-		bldc_controller_set_cfg();
+		motor_config();
 	#endif
 
 	/*Enable system interrupt*/
@@ -255,6 +254,15 @@ int main (void)
 		if (xTaskCreate(xTaskControlLoop, "CNTRL", CONTROL_LOOP_TASK_STACK_SIZE, NULL,
 			CONTROL_LOOP_TASK_PRIORITY, NULL) != pdPASS) {
 			printf("-- MAIN - Failed to create xControlLoop ...\r\n");
+		}//end
+	#endif
+
+	#if (MOTOR_CONTROLLER_ENABLED)
+		printf( "-- MAIN - motor_task ...\r\n" );
+		/* create the task motor_task*/
+		if (xTaskCreate(motor_task, "MOTOR", MOTOR_TASK_STACK_SIZE, NULL,
+						MOTOR_TASK_PRIORITY, NULL) != pdPASS) {
+			printf("-- MAIN - Failed to create motor_task ...\r\n");
 		}//end
 	#endif
 

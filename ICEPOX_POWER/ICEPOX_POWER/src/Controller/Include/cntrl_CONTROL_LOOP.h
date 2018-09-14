@@ -34,7 +34,7 @@
  #include "cntrl_PWM.h"
  #include "cntrl_I2C_DAC.h"
  #include "cntrl_EXTINT.h"
- #include "cntrl_BLDC_CONTROLLER.h"
+ #include "cntrl_MOTOR.h"
 
  #define CONTROL_LOOP_TASK_MS			25
 

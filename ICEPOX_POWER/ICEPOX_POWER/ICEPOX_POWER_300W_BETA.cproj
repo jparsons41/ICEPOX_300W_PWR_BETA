@@ -875,9 +875,6 @@
     <Compile Include="src\Controller\cntrl_ADC.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\Controller\cntrl_BLDC_CONTROLLER.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="src\Controller\cntrl_CONTROL_LOOP.c">
       <SubType>compile</SubType>
     </Compile>
@@ -899,13 +896,13 @@
     <Compile Include="src\Controller\cntrl_MCAN.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\Controller\cntrl_MOTOR.c">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\Controller\cntrl_PWM.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\Controller\Include\cntrl_ADC.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="src\Controller\Include\cntrl_BLDC_CONTROLLER.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\Controller\Include\cntrl_CONTROL_LOOP.h">
@@ -927,6 +924,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\Controller\Include\cntrl_MCAN.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\Controller\Include\cntrl_MOTOR.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\Controller\Include\cntrl_PWM.h">

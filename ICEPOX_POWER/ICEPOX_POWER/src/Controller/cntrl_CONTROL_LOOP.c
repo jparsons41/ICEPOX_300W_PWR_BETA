@@ -650,12 +650,6 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
  }//controlLoop
 
 
- static uint8_t idleBuff[2] = {
-	0xC4, 0x00
- };
-
- static uint8_t runBuff[2] = {0xDC, 0x06};
- static uint8_t stopBuff[2] = {0xDC, 0x05};
 
  /*-----------------------------------------------------------*/
  /**
@@ -667,8 +661,7 @@ void xTaskControlLoop(void *pvParameters)
 	/* set global flag that this task has been instantiate*/
 	/* this allows code in adc_complete_callback() to send msgs to this task via xCntrlLoopQHndle */
 	gbl_CntrlLoopStartedMem = 1;
-	static uint32_t tempCountr = 0;
-	static bool flipper = false;
+
 
 	/* this is the infinite task loop */
 	for (;;) {
@@ -682,32 +675,6 @@ void xTaskControlLoop(void *pvParameters)
 		//LED_Toggle(LED_RED);
 
 		vTaskDelay(CONTROL_LOOP_TASK_MS);
-
-		//static uint32_t nnn = 0;
-		//if (nnn == 0) printf("%u\r\n", gbl_AnalogIn.ain2_ILoadMeas);
-		//nnn++;
-		//nnn %= 20;
-
-		bldc_controller_send_msg(&idleBuff[0], 1);
-
-
-		tempCountr++;
-		tempCountr %= 200;
-		if (tempCountr == 0) {
-			if (flipper == true) {
-				bldc_controller_send_msg(&runBuff[0], 1);
-				flipper = false;
-			}
-			else {
-				bldc_controller_send_msg(&stopBuff[0], 1);
-				flipper = true;
-			}
-		}
-
-
-
-
-
 
 	}//end for
 
