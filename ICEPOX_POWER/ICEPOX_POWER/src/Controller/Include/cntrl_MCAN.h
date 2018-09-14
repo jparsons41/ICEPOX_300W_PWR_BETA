@@ -3,7 +3,7 @@
  *
  * Created: 3/10/2017 11:14:44 AM
  *  Author: Gerald
- */ 
+ */
 
 #ifndef CNTRL_MCAN_H_
 #define CNTRL_MCAN_H_

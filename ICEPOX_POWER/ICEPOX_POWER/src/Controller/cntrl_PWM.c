@@ -22,7 +22,7 @@ void configure_tcc(void)
 
 	/*set relevant parameters*/
 	config_tcc.counter.clock_source    = GCLK_GENERATOR_1; /*GCLK_1 is derived from  DPLL @ 48 Mhz */
-	config_tcc.counter.clock_prescaler = TCC_CLOCK_PRESCALER_DIV1;  /*sets GCLK_1 to peripheral clock divider*/
+	config_tcc.counter.clock_prescaler = TCC_CLOCK_PRESCALER_DIV1024;  /*sets GCLK_1 to peripheral clock divider*/
 	config_tcc.counter.period = USER_PWM_PERIOD; /*set the count-up-to value, up to 24-bits*/
 	config_tcc.compare.wave_generation = TCC_WAVE_GENERATION_SINGLE_SLOPE_PWM; /*sets the waveform mode*/
 

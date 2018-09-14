@@ -18,7 +18,7 @@ struct can_rx_element_buffer rx_element_buffer;
 
 //SPI_Stepper_cmd_t xSPIStepperCmd;   /*this is the command structure, see cntrl_SPI_STEPPER.h*/
 
- 
+
 /*-----------------------------------------------------------*/
 void configure_mcan(void)
 {
@@ -153,10 +153,10 @@ void CAN0_Handler(void)
 		/*retrieve data packet from fifo 0, load into can_rx_msg*/
 		if (!rx_element_fifo_0.R0.bit.XTD) {
 		    /*if a standard message, ID is in bits 18..28, so extract*/
-		    pxMessage->ucID   = ((rx_element_fifo_0.R0.bit.ID & (0x1FFC0000ul))>>18);    /* standard id */	
+		    pxMessage->ucID   = ((rx_element_fifo_0.R0.bit.ID & (0x1FFC0000ul))>>18);    /* standard id */
 		} else {
 			/*if extended identifier, ID id in bits 0..28*/
-			pxMessage->ucID   = (rx_element_fifo_0.R0.bit.ID & (0x1FFFFFFFul));          /* extended id */	
+			pxMessage->ucID   = (rx_element_fifo_0.R0.bit.ID & (0x1FFFFFFFul));          /* extended id */
 		}
 		pxMessage->ucLEN  = rx_element_fifo_0.R1.bit.DLC;   /* len */
 		pxMessage->ucRXTS = rx_element_fifo_0.R1.bit.RXTS;  /* rx timestamp */
@@ -203,13 +203,13 @@ void CAN0_Handler(void)
 		can_stop(&can_instance);
 		printf("!! CAN0_Handler - CAN_PROTOCOL_ERROR_ARBITRATION !! \r\n");
 		pxMessage->ucFaultCode = MCAN_RX_FLT_CAN_PROTOCOL_ERROR_DATA;
-		clearCANcommands();					// clears gbl CAN commands from memory		
+		clearCANcommands();					// clears gbl CAN commands from memory
 	}
 
 
 	//if (pxMessage->ucFaultCode == MCAN_RX_FLT_ALL_OK) {
 		if (!xQueueSendToBackFromISR( xMCANRXQHndle, &pxMessage, &xHigherPriorityTaskWoken )) {
-			printf("!! CAN0_Handler - xMCANRXQHndle Queue is Full !! \r\n");		
+			printf("!! CAN0_Handler - xMCANRXQHndle Queue is Full !! \r\n");
 		}
 	//}
 
@@ -240,7 +240,7 @@ void xTaskMCAN_RX_Handler( void *pvParameters )
 	can_err_data.retry_cnt			= 0;    /*clear retry counter*/
 
 	/* As per most tasks, this task is implemented within an infinite loop. */
-	for( ;; ) 
+	for( ;; )
 	{
 		/* get a value to write from somewhere else */
 		xStatus = xQueueReceive(xMCANRXQHndle, &ptr_can_rx_q_msg, portMAX_DELAY);
@@ -260,12 +260,12 @@ void xTaskMCAN_RX_Handler( void *pvParameters )
 			rcv_cntrlbd_data.bus_flt     = ptr_can_rx_q_msg->ucESI;                 /*message error state*/
 			rcv_cntrlbd_data.in_queue    = xNum_waiting;		                    /*number of message waiting in queue*/
 			rcv_cntrlbd_data.flt_code	 = ptr_can_rx_q_msg->ucFaultCode;           /*fault code*/
-			
+
 			/*track errors*/
 			if (!rcv_cntrlbd_data.flt_code){
 				can_err_data.fault_status = 0;									    /*there is no error */
 				can_err_data.retry_cnt = 0;											/*clear retry counter*/
-			}//end if 
+			}//end if
 			else {
 				can_err_data.last_fault_code = rcv_cntrlbd_data.flt_code;	        /*this is the fault code */
 				can_err_data.fault_status = 1;									    /*set error */
@@ -274,9 +274,9 @@ void xTaskMCAN_RX_Handler( void *pvParameters )
 				if (xTaskCreate(xTaskMCAN_ERROR_Handler, "CAN_ERR_HNDLR", CAN_ERR_HANDLER_TASK_STACK_SIZE, NULL,
 					CAN_ERR_HANDLER_TASK_PRIORITY, NULL) != pdPASS) {
 					printf("-- CAN_RX: - Failed to Create xTaskCAN_ERROR_Handler !!!!! ...\r\n");
-				}//end xTaskCAN_ERROR		
+				}//end xTaskCAN_ERROR
 			}
-	
+
 			/*helpful for debug but will cause message flood*/
 			#if (CNTRL_MCAN_RX_VERBOSE)
 				printf("-- CAN_RX: ID 0x%X, Fifo %d, Len %d, Tic %d, Elap %d, Flt %d, InQ %d\r\n",
@@ -300,7 +300,7 @@ void xTaskMCAN_RX_Handler( void *pvParameters )
 
 				/*place in debug q*/
 				mcan_q_putItem(&rx_can_queue, new_rx_data);
-			   
+
 			   /*switch based on message ID, which must have passed the filter*/
 			   switch (ptr_can_rx_q_msg->ucID) {
 
@@ -314,7 +314,7 @@ void xTaskMCAN_RX_Handler( void *pvParameters )
 						}
 						/*bit mapped command byte, 8-bits*/
 						rcv_cntrlbd_data.cmd1.data_val[1] = (uint16_t)  (ptr_can_rx_q_msg->ucData[1]);
-						//voltage set-point byte, 8-bits//	
+						//voltage set-point byte, 8-bits//
 						rcv_cntrlbd_data.cmd1.data_val[2] = (uint16_t)  (ptr_can_rx_q_msg->ucData[2]);
 						//current set-point byte, 8-bits//
 						rcv_cntrlbd_data.cmd1.data_val[3] = (uint16_t)  (ptr_can_rx_q_msg->ucData[3]);
@@ -333,14 +333,14 @@ void xTaskMCAN_RX_Handler( void *pvParameters )
 							printf("^^ %6s: %x\t %x\t %x\t %x || %d\t %d\t %d\r\n",
 								MCAN_RX_POWER_COMMAND_STR,
 								rcv_cntrlbd_data.cmd1.data_val[0],		//motor command, 8-bits
-								rcv_cntrlbd_data.cmd1.data_val[1],		//bit mapped command byte, 8-bits	
-								rcv_cntrlbd_data.cmd1.data_val[2],		//voltage set-point byte, 8-bits	
-								rcv_cntrlbd_data.cmd1.data_val[3],		//current set-point, 8-bits	
+								rcv_cntrlbd_data.cmd1.data_val[1],		//bit mapped command byte, 8-bits
+								rcv_cntrlbd_data.cmd1.data_val[2],		//voltage set-point byte, 8-bits
+								rcv_cntrlbd_data.cmd1.data_val[3],		//current set-point, 8-bits
 								rcv_cntrlbd_data.cmd1.tic_last,			//last time this message was received
 								rcv_cntrlbd_data.cmd1.tic_this,			//time this messages was received
 								rcv_cntrlbd_data.cmd1.tic_elapsed);		//elapsed time since the last message
 						#endif
-						
+
 						//Parse POWER_COMMAND (0x40) into the global variable structure
 						//Set data in the gbl_PwrCmd variable structure for processing in the control loop(s)
 						if (rcv_cntrlbd_data.flt_code==0){
@@ -350,38 +350,41 @@ void xTaskMCAN_RX_Handler( void *pvParameters )
 							gbl_PwrCmd.set_i				= rcv_cntrlbd_data.cmd1.data_val[3],					//current set-point, 8-bits
 							gbl_PwrCmd.stats.rcv_tic_last	= rcv_cntrlbd_data.cmd1.tic_last;						//last time this message was received
 							gbl_PwrCmd.stats.rcv_tic_this	= rcv_cntrlbd_data.cmd1.tic_this;						//time this messages was received
-							gbl_PwrCmd.stats.rcv_elapsed	= rcv_cntrlbd_data.cmd1.tic_elapsed;					//elapsed time since the last message	
+							gbl_PwrCmd.stats.rcv_elapsed	= rcv_cntrlbd_data.cmd1.tic_elapsed;					//elapsed time since the last message
 							gbl_PwrCmd.stats.fault			= rcv_cntrlbd_data.flt_code;
-							
+
 							//parse out and set gbl_CmdFlags (this is the same data as in gbl_PwrCmd.cmd)
 							gbl_CmdFlags.sys_run			= ((rcv_cntrlbd_data.cmd1.data_val[1] & 0x01) >> 0);	//shutdown flag
 							gbl_CmdFlags.output_en			= ((rcv_cntrlbd_data.cmd1.data_val[1] & 0x02) >> 1);	//output enable flag
 							gbl_CmdFlags.bat_chrg_en		= ((rcv_cntrlbd_data.cmd1.data_val[1] & 0x04) >> 2);	//battery charge enable flag
-							gbl_CmdFlags.resv_3				= ((rcv_cntrlbd_data.cmd1.data_val[1] & 0x08) >> 3);	
+							gbl_CmdFlags.resv_3				= ((rcv_cntrlbd_data.cmd1.data_val[1] & 0x08) >> 3);
 							gbl_CmdFlags.resv_4				= ((rcv_cntrlbd_data.cmd1.data_val[1] & 0x10) >> 4);
 							gbl_CmdFlags.resv_5				= ((rcv_cntrlbd_data.cmd1.data_val[1] & 0x20) >> 5);
 							gbl_CmdFlags.resv_6				= ((rcv_cntrlbd_data.cmd1.data_val[1] & 0x40) >> 6);
 							gbl_CmdFlags.resv_7				= ((rcv_cntrlbd_data.cmd1.data_val[1] & 0x80) >> 7);
 						} else {
-							
+
 							gbl_PwrCmd.motor				= 0;					//motor command, 8-bits
 							gbl_PwrCmd.cmd					= 0;					//bit mapped command byte, 8-bits
 							gbl_PwrCmd.set_v				= 0,					//voltage set-point byte, 8-bits
 							gbl_PwrCmd.set_i				= 0,					//current set-point, 8-bits
 							gbl_PwrCmd.stats.rcv_tic_last	= 0;					//last time this message was received
 							gbl_PwrCmd.stats.rcv_tic_this	= 0;					//time this messages was received
-							gbl_PwrCmd.stats.fault			= rcv_cntrlbd_data.flt_code;	
+							gbl_PwrCmd.stats.fault			= rcv_cntrlbd_data.flt_code;
 							//parse out and set gbl_CmdFlags (this is the same data as in gbl_PwrCmd.cmd)
 							gbl_CmdFlags.sys_run			= 0;	//shutdown flag
 							gbl_CmdFlags.output_en			= 0;	//output enable flag
 							gbl_CmdFlags.bat_chrg_en		= 0;	//battery charge enable flag
-							gbl_CmdFlags.resv_3				= 0;	
+							gbl_CmdFlags.resv_3				= 0;
 							gbl_CmdFlags.resv_4				= 0;
 							gbl_CmdFlags.resv_5				= 0;
 							gbl_CmdFlags.resv_6				= 0;
-							gbl_CmdFlags.resv_7				= 0;					
-		
+							gbl_CmdFlags.resv_7				= 0;
+
 						}
+						#define TEMP_BATTERY_CHARGE_EN			 PIN_PB31
+						if (gbl_CmdFlags.bat_chrg_en == 1) port_pin_set_output_level(TEMP_BATTERY_CHARGE_EN, true);	// lmp remove for test batt charge only
+						else port_pin_set_output_level(TEMP_BATTERY_CHARGE_EN, false);
 
 					break;
 					 /*this decodes MCAN_RX_POWER_CFG_COMMAND 0x41 message*/
@@ -391,7 +394,7 @@ void xTaskMCAN_RX_Handler( void *pvParameters )
 						rcv_cntrlbd_data.cmd1.data_val[0] = (uint16_t)  (ptr_can_rx_q_msg->ucData[0]);
 						/*bit mapped command byte, 8-bits*/
 						rcv_cntrlbd_data.cmd1.data_val[1] = (uint16_t)  (ptr_can_rx_q_msg->ucData[1]);
-						//voltage set-point byte, 8-bits//	
+						//voltage set-point byte, 8-bits//
 						rcv_cntrlbd_data.cmd1.data_val[2] = (uint16_t)  (ptr_can_rx_q_msg->ucData[2]);
 						//current set-point byte, 8-bits//
 						rcv_cntrlbd_data.cmd1.data_val[3] = (uint16_t)  (ptr_can_rx_q_msg->ucData[3]);
@@ -410,48 +413,48 @@ void xTaskMCAN_RX_Handler( void *pvParameters )
 							printf("^^ %6s: %x\t %x\t %x\t %x || %d\t %d\t %d\r\n",
 								MCAN_RX_POWER_CFG_COMMAND_STR,
 								rcv_cntrlbd_data.cmd1.data_val[0],		//motor command, 8-bits
-								rcv_cntrlbd_data.cmd1.data_val[1],		//bit mapped command byte, 8-bits	
-								rcv_cntrlbd_data.cmd1.data_val[2],		//voltage set-point byte, 8-bits	
-								rcv_cntrlbd_data.cmd1.data_val[3],		//current set-point, 8-bits	
+								rcv_cntrlbd_data.cmd1.data_val[1],		//bit mapped command byte, 8-bits
+								rcv_cntrlbd_data.cmd1.data_val[2],		//voltage set-point byte, 8-bits
+								rcv_cntrlbd_data.cmd1.data_val[3],		//current set-point, 8-bits
 								rcv_cntrlbd_data.cmd1.tic_last,			//last time this message was received
 								rcv_cntrlbd_data.cmd1.tic_this,			//time this messages was received
 								rcv_cntrlbd_data.cmd1.tic_elapsed);		//elapsed time since the last message
 						#endif
-						
+
 						//Parse POWER_COMMAND (0x40) into the global variable structure
 						//Set data in the gbl_PwrCmd variable structure for processing in the control loop(s)
 						gbl_PwrCfgCmd.command		    	= rcv_cntrlbd_data.cmd1.data_val[0];					//motor command, 8-bits
 						gbl_PwrCfgCmd.set_value		     	= (rcv_cntrlbd_data.cmd1.data_val[1]<< 24 | rcv_cntrlbd_data.cmd1.data_val[2] <<16 | rcv_cntrlbd_data.cmd1.data_val[3] << 8 | rcv_cntrlbd_data.cmd1.data_val[4]);					//bit mapped command byte, 8-bits
 						gbl_PwrCfgCmd.stats.rcv_tic_last	= rcv_cntrlbd_data.cmd1.tic_last;						//last time this message was received
 						gbl_PwrCfgCmd.stats.rcv_tic_this	= rcv_cntrlbd_data.cmd1.tic_this;						//time this messages was received
-						gbl_PwrCfgCmd.stats.rcv_elapsed	= rcv_cntrlbd_data.cmd1.tic_elapsed;					//elapsed time since the last message	
-								
+						gbl_PwrCfgCmd.stats.rcv_elapsed	= rcv_cntrlbd_data.cmd1.tic_elapsed;					//elapsed time since the last message
+
 
 						switch (gbl_PwrCfgCmd.command) {
 							case 0:     break;
-							case MCAN_RX_I_BATT_SP_MSG:			gbl_PwrCfg.cfg_Ibatt_Sp          = gbl_PwrCfgCmd.set_value;	break;						
-							case MCAN_RX_V_BATT_HIGH_MSG:		gbl_PwrCfg.cfg_Vbatt_high        = gbl_PwrCfgCmd.set_value;	break;							
-							case MCAN_RX_V_BATT_LOW_MSG:		gbl_PwrCfg.cfg_Vbatt_low         = gbl_PwrCfgCmd.set_value;	break;							
-							case MCAN_RX_I_BATT_HIGH_MSG:		gbl_PwrCfg.cfg_Ibatt_high        = gbl_PwrCfgCmd.set_value;	break;							
-							case MCAN_RX_I_BATT_LOW_MSG:		gbl_PwrCfg.cfg_Ibatt_low         = gbl_PwrCfgCmd.set_value;	break;							
-							case MCAN_RX_I_BATT_TRICKLE_MSG:	gbl_PwrCfg.cfg_Ibatt_trickle_cut = gbl_PwrCfgCmd.set_value;	break;						
-							case MCAN_RX_V_BATT_RECHARGE_MSG:	gbl_PwrCfg.cfg_Vbatt_recharge    = gbl_PwrCfgCmd.set_value;	break;							
-							case MCAN_RX_ALT_UNREG_MIN_MSG:		gbl_PwrCfg.cfg_Alt_unreg_min     = gbl_PwrCfgCmd.set_value;	break;					
-							case MCAN_RX_ALT_UNREG_MAX_MSG:		gbl_PwrCfg.cfg_Alt_unreg_max     = gbl_PwrCfgCmd.set_value;	break;					
-							case MCAN_RX_I_LOAD_MAX_MSG:		gbl_PwrCfg.cfg_I_load_max        = gbl_PwrCfgCmd.set_value;  break;							
+							case MCAN_RX_I_BATT_SP_MSG:			gbl_PwrCfg.cfg_Ibatt_Sp          = gbl_PwrCfgCmd.set_value;	break;
+							case MCAN_RX_V_BATT_HIGH_MSG:		gbl_PwrCfg.cfg_Vbatt_high        = gbl_PwrCfgCmd.set_value;	break;
+							case MCAN_RX_V_BATT_LOW_MSG:		gbl_PwrCfg.cfg_Vbatt_low         = gbl_PwrCfgCmd.set_value;	break;
+							case MCAN_RX_I_BATT_HIGH_MSG:		gbl_PwrCfg.cfg_Ibatt_high        = gbl_PwrCfgCmd.set_value;	break;
+							case MCAN_RX_I_BATT_LOW_MSG:		gbl_PwrCfg.cfg_Ibatt_low         = gbl_PwrCfgCmd.set_value;	break;
+							case MCAN_RX_I_BATT_TRICKLE_MSG:	gbl_PwrCfg.cfg_Ibatt_trickle_cut = gbl_PwrCfgCmd.set_value;	break;
+							case MCAN_RX_V_BATT_RECHARGE_MSG:	gbl_PwrCfg.cfg_Vbatt_recharge    = gbl_PwrCfgCmd.set_value;	break;
+							case MCAN_RX_ALT_UNREG_MIN_MSG:		gbl_PwrCfg.cfg_Alt_unreg_min     = gbl_PwrCfgCmd.set_value;	break;
+							case MCAN_RX_ALT_UNREG_MAX_MSG:		gbl_PwrCfg.cfg_Alt_unreg_max     = gbl_PwrCfgCmd.set_value;	break;
+							case MCAN_RX_I_LOAD_MAX_MSG:		gbl_PwrCfg.cfg_I_load_max        = gbl_PwrCfgCmd.set_value;  break;
 						}
-							    
+
 					break;
 					/////////////////////////////////////////////////////////
 					// ADD DECODING FOR OTHER MESSAGE HERE ....
 					/////////////////////////////////////////////////////////
-	
+
 				  default:
 				    break;
 
 			   }//end switch
 
-			}//end ptr_can_rx_q_msg->ucESI 
+			}//end ptr_can_rx_q_msg->ucESI
 
 		}//end xStatus == pdPASS
 
@@ -462,7 +465,7 @@ void xTaskMCAN_RX_Handler( void *pvParameters )
 
 }//xTaskMCAN_RX_Handler
 
-/*-----------------------------------------------------------*/  
+/*-----------------------------------------------------------*/
 /**
  * \brief This is the task that writes MCAN messages 0x30 and 0x31 to the controller
  * This has been modified to execute every 50 ms (ie 20 Hz)
@@ -477,7 +480,7 @@ void xTaskMCAN_TX(void *pvParameters)
 	BaseType_t xNum_waiting = 0;	/*number of messages waiting in queue */
 	BaseType_t xStatus      = 0;    /*queue status */
 	BaseType_t ping_pong	= 0;	/*used to alternate at 2X msg frequency between 0x30 and 0x31*/
-	 
+
 	/*define temp structure to store MCAN messages 0x30 and 0x31*/
 	uint8_t CAN_tx_msg_x30[MCAN_TX_MSG_LEN], CAN_tx_msg_x31[MCAN_TX_MSG_LEN];
 
@@ -488,38 +491,38 @@ void xTaskMCAN_TX(void *pvParameters)
 	}//end for i
 
 	for (;;) {
-	
+
 		/*for simplicity, since there are only two messages, will simply ping-pong at 2X desired RX rate*/
 		if (!ping_pong) {
 			/*Encode MCAN message 0x30 BATTERY_STATUS*/
 			uint16_t	CAN_bat_i = gbl_BatStatus.bat_i + 32768;	// add scalar to battery current to xmit signed int
-			
-			CAN_tx_msg_x30[0] = (uint8_t) ( CAN_bat_i & 0x00ff);						/*battery current, mA LSB*/						
-			CAN_tx_msg_x30[1] = (uint8_t) ((CAN_bat_i & 0xff00)>>8);					/*battery current, mA MSB*/									
-			CAN_tx_msg_x30[2] = (uint8_t) ( gbl_BatStatus.bat_v & 0x00ff);				/*battery voltage, mV LSB*/			
-			CAN_tx_msg_x30[3] = (uint8_t) ((gbl_BatStatus.bat_v & 0xff00)>>8);			/*battery voltage, mV MSB*/			
+
+			CAN_tx_msg_x30[0] = (uint8_t) ( CAN_bat_i & 0x00ff);						/*battery current, mA LSB*/
+			CAN_tx_msg_x30[1] = (uint8_t) ((CAN_bat_i & 0xff00)>>8);					/*battery current, mA MSB*/
+			CAN_tx_msg_x30[2] = (uint8_t) ( gbl_BatStatus.bat_v & 0x00ff);				/*battery voltage, mV LSB*/
+			CAN_tx_msg_x30[3] = (uint8_t) ((gbl_BatStatus.bat_v & 0xff00)>>8);			/*battery voltage, mV MSB*/
 			CAN_tx_msg_x30[4] = (uint8_t) ( gbl_BatStatus.bat_chrg_status);				/*battery charge status 1-charging, 0-off*/
-			CAN_tx_msg_x30[5] = (uint8_t) ( gbl_BatStatus.buss_v & 0x00ff);				/*buss voltage, mV LSB*/		
+			CAN_tx_msg_x30[5] = (uint8_t) ( gbl_BatStatus.buss_v & 0x00ff);				/*buss voltage, mV LSB*/
 			CAN_tx_msg_x30[6] = (uint8_t) ((gbl_BatStatus.buss_v & 0xff00)>>8);			/*buss voltage, mV MSB*/
-			CAN_tx_msg_x30[7] = (uint8_t) ( gbl_BatStatus.state_of_chrg);				/*state of charge*/		
-		} else {		
+			CAN_tx_msg_x30[7] = (uint8_t) ( gbl_BatStatus.state_of_chrg);				/*state of charge*/
+		} else {
 			/*Encode MCAN message 0x31 POWER_STATUS*/
 			CAN_tx_msg_x31[0] = (uint8_t) ( gbl_PwrStatus.load_i & 0x00ff);				/*load current, mA LSB*/
 			CAN_tx_msg_x31[1] = (uint8_t) ((gbl_PwrStatus.load_i & 0xff00)>>8);			/*load current, mA MSB*/
-			CAN_tx_msg_x31[2] = (uint8_t) ( gbl_PwrStatus.load_v & 0x00ff);				/*load voltage, mV LSB*/ 
+			CAN_tx_msg_x31[2] = (uint8_t) ( gbl_PwrStatus.load_v & 0x00ff);				/*load voltage, mV LSB*/
 			CAN_tx_msg_x31[3] = (uint8_t) ((gbl_PwrStatus.load_v & 0xff00)>>8);			/*load voltage, mV MSB*/
-			CAN_tx_msg_x31[4] = (uint8_t) ( gbl_PwrStatus.dc_dc_i& 0x00ff);				/*dc/dc current, mA LSB*/ 
+			CAN_tx_msg_x31[4] = (uint8_t) ( gbl_PwrStatus.dc_dc_i& 0x00ff);				/*dc/dc current, mA LSB*/
 			CAN_tx_msg_x31[5] = (uint8_t) ((gbl_PwrStatus.dc_dc_i& 0xff00)>>8);			/*dc/dc current, mA MSB*/
 			CAN_tx_msg_x31[6] = (uint8_t) ( gbl_PwrStatus.pwr_status);					/*gbl_PwrStatusFlags bit-mapping*/
-			CAN_tx_msg_x31[7] = (uint8_t) ( gbl_PwrStatus.faults);					    /*gbl_PwrFaultFlags bit-mapping*/ 				
+			CAN_tx_msg_x31[7] = (uint8_t) ( gbl_PwrStatus.faults);					    /*gbl_PwrFaultFlags bit-mapping*/
 		}	//end if ping_pong
-													
+
 		if (!can_err_data.fault_status){
 
 			#if (CNTRL_MCAN_TX_VERBOSE)
 				printf ("-- xTaskMCAN_TX - Send message init val %d  ... \r\n", xWrite_value );
-			#endif	
-					
+			#endif
+
 			if (!ping_pong) {
 				/*send 0x30*/
 				mcan_send_standard_message(MCAN_TX_MSG_BATTERY_STATUS, CAN_tx_msg_x30, MCAN_TX_MSG_LEN);
@@ -529,7 +532,7 @@ void xTaskMCAN_TX(void *pvParameters)
 				mcan_send_standard_message(MCAN_TX_MSG_POWER_STATUS, CAN_tx_msg_x31, MCAN_TX_MSG_LEN);
 				ping_pong = 0;
 			}
-						
+
 		} else{
 			#if (CNTRL_MCAN_TX_VERBOSE)
 				printf ("-- xTaskMCAN_TX - Can't send message, MCAN Fault Code %d, Retry Cnt %d  ... \r\n", can_err_data.last_fault_code, can_err_data.retry_cnt);
@@ -596,7 +599,7 @@ void mcan_q_init(can_circularQueue_t *theQueue)
 		theQueue->q_data[i].msg_id = 0;
 		theQueue->q_data[i].rvcd_tic = 0;
 	    theQueue->q_data[i].tic_elapsed = 0;
-    }        
+    }
     return;
 }
 /*-----------------------------------------------------------*/

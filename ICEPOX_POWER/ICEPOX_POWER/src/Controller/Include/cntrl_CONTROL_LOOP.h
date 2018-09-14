@@ -3,7 +3,7 @@
  *
  * Created: 6/6/2017 4:24:34 PM
  *  Author: Gerald
- */ 
+ */
 
 
 #ifndef CNTRL_CONTROL_LOOP_H_
@@ -34,6 +34,7 @@
  #include "cntrl_PWM.h"
  #include "cntrl_I2C_DAC.h"
  #include "cntrl_EXTINT.h"
+ #include "cntrl_BLDC_CONTROLLER.h"
 
  #define CONTROL_LOOP_TASK_MS			25
 
@@ -51,7 +52,7 @@ uint16_t static	VBattery_mV	;					/*battery voltage, mV*/
 uint8_t	 static	bat_chrg_status;			/*battery charge status 1-charging, 0-off*/
 uint16_t static	AltUnregVmon_mV;					/*buss voltage, mV*/
 uint8_t	 static	state_of_chrg;			/*state of charge*/
-	
+
 //power status state variables
 uint16_t static ILoadMeas_mA;					/*load current, mA*/
 uint16_t static ILoadMeas_offset_mA;			/*load current offset used to tare, mA*/
@@ -74,7 +75,7 @@ uint8_t	static	Bat_I_Set_last;				    /*remembers last value (avoid sending comm
 uint16_t	static	ISet_DAC_mA;					/*Command for the ISet_DAC_mA channel of the DAC in mA of output*/
 uint16_t	static	ISet_DAC_mA_last;				/*remembers last value (avoid sending command multiple times)*/
 uint16_t	static	VSet_DAC_mV;				/*Command for the VSet_DAC channel of the DAC, in mV from 20000 to 29000*/
-uint16_t	static	VSet_DAC_mV_last;			/*remembers last value (avoid sending command multiple times)*/		
+uint16_t	static	VSet_DAC_mV_last;			/*remembers last value (avoid sending command multiple times)*/
 
 //VSET DAC
 #define VSET_DAC_CAN_TO_MV(x)					( (uint16_t) ((double) x * 35.29411) + 20000)
@@ -112,7 +113,7 @@ static I2CDac_cmd_t xI2CDacCmd = {
 #define ALT_UNDERVOLT_COUNTER_MAX			 10			//
 #define ALT_OVERVOLT_COUNTER_MAX			 10			//
 #define LOAD_OVERCURRENT_COUNTER_MAX	     10				//
-#define TWENTYEIGHT_UNDERVOLT_COUNTER_MAX    10	
+#define TWENTYEIGHT_UNDERVOLT_COUNTER_MAX    10
 #define TWENTYEIGHT_OVERCURRENT_COUNTER_MAX	 10
 #define BACKFEED_COUNTER_MAX		         10          //
 #define IBATT_COUNTER_MAX			         10          //

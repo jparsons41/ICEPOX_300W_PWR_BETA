@@ -3,7 +3,7 @@
  *
  * Created: 3/12/2017 1:10:18 PM
  *  Author: Gerald
- */ 
+ */
 
 #ifndef CNTRL_ADC_H_
 #define CNTRL_ADC_H_
@@ -36,7 +36,7 @@
 #define MAX_ADC_QUEUE_ITEMS			( 25 )
 
 /*sets the ADC peripheral system interrupt priority 0 .. 3 (0 is highest)*/
-#define ADC_SYSTEM_INTERRUPT_PRIORITY		( 3 ) 
+#define ADC_SYSTEM_INTERRUPT_PRIORITY		( 3 )
 
 /*ADC macros (be careful w/ casting!!)*/
 #define ADC_REF_MV						( (double) 3265 )					           /*Vref ANA in mV*/  //measured 3325
@@ -67,10 +67,10 @@
 
 /*PA03_DCDC_Vmon*/
 /*http://www.synqor.com/Datasheets/NQ60W60QTx25_Datasheet.pdf*/
-#define DCDC_R14						( (double) 47000 )				
+#define DCDC_R14						( (double) 47000 )
 #define DCDC_R17						( (double) 5600 )
 #define DCDC_VMON_DIV					( (double) (DCDC_R17 / (DCDC_R17 + DCDC_R14)))
-#define DCDC_VMON_MV_TO_MV(x)			( (uint16_t) ( (double) x / DCDC_VMON_DIV))     /*converts ADC mv to 28V bus monitor volts, about factor of 9.4*/  
+#define DCDC_VMON_MV_TO_MV(x)			( (uint16_t) ( (double) x / DCDC_VMON_DIV))     /*converts ADC mv to 28V bus monitor volts, about factor of 9.4*/
 
 /*Calibrated count to scaleDCDC_Vmon*/
 #define DCDC_VMON_DIV_MULTIPLIER		( (double) (1.3952) ) /*m for mx+b for count to Vmon curve*/
@@ -82,13 +82,13 @@
 /*PB08_iLoad_Meas */
 /*http://www.allegromicro.com/~/media/Files/Datasheets/ACS722-Datasheet.ashx*/
 #define ILOAD_OFFSET_MV					( (double) 330 )					 /*mV offset specified in data sheet*/
-#define ILOAD_SENSITIVITY				( (double) 132 )					 /*sensitivity mv/A*/				 
+#define ILOAD_SENSITIVITY				( (double) 132 )					 /*sensitivity mv/A*/
 #define ILOAD_MV_TO_MA(x)				( (uint16_t) (( (double) x - ILOAD_OFFSET_MV) / ILOAD_SENSITIVITY * 1000.0) ) /*Iload in mA*/
 
 /*Calibrated count to scale iLoad_Measn*/
-#define ILOAD_DIV_MULTIPLIER		( (double) (.3914) ) /*m for mx+b for count to Vmon curve*/
-#define ILOAD_DIV_OFFSET			( (double) (-2476.1) ) /*b for mx+b for count to Vmon curve*/
-#define ILOAD_COUNT_TO_MA(x)		( (int16_t) (((double) x * ILOAD_DIV_MULTIPLIER) + ILOAD_DIV_OFFSET))     /*output bat vmon in mV*/
+#define ILOAD_DIV_MULTIPLIER		( (double) (.722) ) /*m for mx+b for count to Vmon curve*/
+#define ILOAD_DIV_OFFSET			( (double) (-26380) ) /*b for mx+b for count to Vmon curve*/
+#define ILOAD_COUNT_TO_MA(x)		( (int16_t) ((x * ILOAD_DIV_MULTIPLIER) + ILOAD_DIV_OFFSET))     /*output bat vmon in mV*/
 
 
 
@@ -111,8 +111,8 @@
 
 
 /*Calibrated count to scale iLoad_Measn*/
-#define IBAT_DIV_MULTIPLIER		( (double) (-.7743) ) /*m for mx+b for count to Vmon curve*/
-#define IBAT_DIV_OFFSET			( (double) (25177) ) /*b for mx+b for count to Vmon curve*/
+#define IBAT_DIV_MULTIPLIER		( (double) (-.7088) ) /*m for mx+b for count to Vmon curve*/
+#define IBAT_DIV_OFFSET			( (double) (25913) ) /*b for mx+b for count to Vmon curve*/
 #define IBAT_COUNT_TO_MV(x)		( (int16_t) ((x * IBAT_DIV_MULTIPLIER) + IBAT_DIV_OFFSET))     /*output bat vmon in mV*/
 
 
@@ -156,7 +156,7 @@
 /*for readability and future optimization, this scaling won't be done in a macro*/
 /*see double scaleTherm(uint16_t VmeasMV)*/
 
-#define ADC_SCALING_DEBUG				( 0 )	  /*flag to show scaling information on power-up*/ 
+#define ADC_SCALING_DEBUG				( 0 )	  /*flag to show scaling information on power-up*/
 
 /*Stores information specific to each message ID defined above*/
 /*up to four 16-bit data values in each message */

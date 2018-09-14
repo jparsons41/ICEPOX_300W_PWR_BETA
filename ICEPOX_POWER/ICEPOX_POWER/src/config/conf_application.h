@@ -3,10 +3,17 @@
  *
  * Created: 5/7/2017 10:31:12 PM
  *  Author: Gerald
- */ 
+ */
 
 #ifndef CONF_APPLICATION_H_
 #define CONF_APPLICATION_H_
+
+
+
+#define BLDC_CONTROLLER_SET_CONFIGS		1
+
+
+
 
 #define STRING_EOL    "\r"
 #define STRING_HEADER "\r\n\r\n-- ICEPOX II POWER BOARD RTOS DEVELOPMENT\r\n" \
@@ -40,7 +47,7 @@
 
 /* Circuit breakers for task enable/disable (DEBUGGING) */
 /* These are FREERTOS TASKS -->*/
-#define TASK_HEARTBEAT_ENABLED				( 1 )	   /*heartbeat task (time-cyclic stuff can go here ...)*/
+#define TASK_HEARTBEAT_ENABLED				( 0 )	   /*heartbeat task (time-cyclic stuff can go here ...)*/
 #define TASK_CLI_ENABLED					( 1 )      /*serial command line interface (CLI)*/
 #define TASK_MCAN_ENABLED					( 1 )	   /*CAN message processing TX/RX*/
 #define TASK_PWM_ENABLED					( 1 )	   /*PWM (using TCC peripheral) to driver motor ENABLE signal */

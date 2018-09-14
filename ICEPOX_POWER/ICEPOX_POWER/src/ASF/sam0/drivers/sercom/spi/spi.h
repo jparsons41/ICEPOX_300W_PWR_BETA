@@ -929,7 +929,7 @@ static inline void spi_get_config_defaults(
 	memset(&(config->mode_specific), 0, sizeof(config->mode_specific));
 
 	/* Master config defaults */
-	config->mode_specific.master.baudrate = 100000;
+	config->mode_specific.master.baudrate = 400000;
 
 	/* pinmux config defaults */
 	config->pinmux_pad0 = PINMUX_DEFAULT;
