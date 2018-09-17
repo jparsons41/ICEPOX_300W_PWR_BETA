@@ -10,7 +10,7 @@
 
 
 
-#define BLDC_CONTROLLER_SET_CONFIGS		1
+#define MOTOR_CNTRLR_SET_CONFIGS		1
 
 
 

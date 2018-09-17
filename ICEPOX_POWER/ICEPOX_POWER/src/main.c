@@ -120,7 +120,7 @@ static void prvSetupHardware( void )
 	/* Output example information */
 	puts(STRING_HEADER);
 
-	#if (BLDC_CONTROLLER_SET_CONFIGS)
+	#if (MOTOR_CONTROLLER_ENABLED)
 		motor_config();
 	#endif
 

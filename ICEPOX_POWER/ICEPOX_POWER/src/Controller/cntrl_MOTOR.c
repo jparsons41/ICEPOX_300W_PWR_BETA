@@ -145,18 +145,20 @@ void motor_task(void *p) {
 	UNUSED(p);
 
 	vTaskDelay(pdMS_TO_TICKS(250));
+	#if (MOTOR_CNTRLR_SET_CONFIGS)
 	motor_set_cfg();
+	#endif
 
 	motor_send_msg(&clearBuff[0], 1);
-	motorFuncBuff[1] = 0x05;
+	motorFuncBuff[1] = 0x00;
 	motor_send_msg(&motorFuncBuff[0], 1);
 
 	motor_set_torque(0);
 
 	for (;;) {
 		vTaskDelay(pdMS_TO_TICKS(300));
-		motor_send_msg(&flushBuff[0], 1);
-		motor_send_msg(&clearBuff[0], 1);
+		//motor_send_msg(&flushBuff[0], 1);
+		//motor_send_msg(&clearBuff[0], 1);
 	}
 }
 
