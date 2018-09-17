@@ -504,21 +504,46 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 
 	static uint32_t temp_oneShot = 0;
 
-	//UPDATE PWM MOTOR COMMAND
-	if (motor_cmd!=motor_cmd_last) {
-		xPwmCmd.uxChId				= 1;			/*This is the requested PWM channel (right now, only 1)*/
-		xPwmCmd.uxDuty				= PWM_CMD_TO_DUTY(motor_cmd); /*Requested duty cycle 0..100%*/
-		if ((xPwmCmd.uxDuty>0)&&(xPwmCmd.uxDuty<=100)) {
-			xPwmCmd.uxOffOn				= 1;			/*1-ON, 0-OFF*/
-		} else {
-			xPwmCmd.uxOffOn				= 0;			/*1-ON, 0-OFF*/
-		}//end if
-		/*send command to PWM task*/
-		if (!xQueueSend(xPwmQHndle, &xPwmCmd, 1000)){
-			printf	("\r\nfail to send to xPwmQHndle queue\n");
-		}//end if
-		motor_cmd_last = motor_cmd;		//remember the last value, to avoid setting pwm multiple times if no change*/
+
+
+
+
+	////UPDATE PWM MOTOR COMMAND
+	//if (motor_cmd!=motor_cmd_last) {
+		////xPwmCmd.uxChId				= 1;			/*This is the requested PWM channel (right now, only 1)*/		// lmp rmv - replaced by the spi command
+		//xPwmCmd.uxDuty				= PWM_CMD_TO_DUTY(motor_cmd); /*Requested duty cycle 0..100%*/
+		//if ((xPwmCmd.uxDuty>0)&&(xPwmCmd.uxDuty<=100)) {
+			//xPwmCmd.uxOffOn				= 1;			/*1-ON, 0-OFF*/
+			//} else {
+			//xPwmCmd.uxOffOn				= 0;			/*1-ON, 0-OFF*/
+		//}//end if
+		/////*send command to PWM task*/
+		////if (!xQueueSend(xPwmQHndle, &xPwmCmd, 1000)){
+		////printf	("\r\nfail to send to xPwmQHndle queue\n");
+		////}//end if
+		////motor_cmd_last = motor_cmd;		//remember the last value, to avoid setting pwm multiple times if no change*/
+//
+//
+		//////////// new
+		//if (xPwmCmd.uxOffOn	== 1)	motor_set_torque((uint16_t)xPwmCmd.uxDuty*10);
+		////else motor_set_torque(0);
+	//}//end if motor_cmd
+
+	//////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+	static uint8_t theLast = 0;
+	if (gbl_PwrCmd.motor != theLast) {		// lmp gbl needs to be changed back to 'motor_cmd' to run through the safety checks
+		motor_set_torque((uint16_t)PWM_CMD_TO_DUTY(gbl_PwrCmd.motor));
+		theLast = gbl_PwrCmd.motor;
 	}//end if motor_cmd
+
+
+
+
+
+
 
 	//UPDATE DAC COMMANDS
 	if (VSet_DAC_mV!=VSet_DAC_mV_last) {

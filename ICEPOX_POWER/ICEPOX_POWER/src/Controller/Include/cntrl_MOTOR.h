@@ -20,9 +20,11 @@
 #include "semphr.h"
 
 
-
 #define MOTOR_WRITE_CONFIG_ENABLED 1
 #define BLDC_CFG_LEN  31
+
+#define MOTOR_DIR_FORWARD  1
+#define MOTOR_DIR_REVERSE  (!MOTOR_DIR_FORWARD)
 
 
 #  define CONF_SPI_MASTER_ENABLE  true	// these are asf MACROs for using master/slave

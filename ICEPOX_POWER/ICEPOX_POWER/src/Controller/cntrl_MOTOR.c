@@ -16,8 +16,7 @@ static void motor_set_cfg(void);
 
 static uint8_t preBuff[2] = { 0xC7, 0xFF };
 static uint8_t flushBuff[2] = { 0xC4, 0x00 };
-static uint8_t runBuff[2] = { 0xDC, 0x06 };
-static uint8_t stopBuff[2] = { 0xDC, 0x05 };
+static uint8_t motorFuncBuff[2] = { 0xDC, 0x05 };
 static uint8_t clearBuff[2] = { 0xE8, 0x01 };
 
 static uint8_t cfgBuff[BLDC_CFG_LEN * 2] = {	// config register values to initialize the bldc controller
@@ -102,6 +101,25 @@ void motor_set_torque(uint16_t trqVal) {
 	static uint8_t trqBuff[2] = { 0xF7, 0xFF };
 	uint32_t parityCount = 0;
 	uint16_t trqCalcd = 0;
+
+	if (trqVal == 0) {
+		motorFuncBuff[1] = 0x00;
+		motor_send_msg(&motorFuncBuff[0], 1);
+		return;
+	}
+
+	if (trqVal < 0) {
+		motorFuncBuff[1] = 0x02 | (MOTOR_DIR_REVERSE << 2);
+		trqVal *= (-1);
+	}
+
+	else {
+		motorFuncBuff[1] = 0x02 | (MOTOR_DIR_FORWARD << 2);
+	}
+
+
+
+	motor_send_msg(&motorFuncBuff[0], 1);
 	trqCalcd = 0xF<<12 | (0x0 <<11) | ((0x03FF & trqVal) << 1);
 
 	uint16_t temp = trqCalcd;
@@ -130,28 +148,15 @@ void motor_task(void *p) {
 	motor_set_cfg();
 
 	motor_send_msg(&clearBuff[0], 1);
+	motorFuncBuff[1] = 0x05;
+	motor_send_msg(&motorFuncBuff[0], 1);
 
-	motor_send_msg(&stopBuff[0], 1);
+	motor_set_torque(0);
 
-	motor_set_torque(1023);
-
-	for (int i=0; i<9; i++) {
-		vTaskDelay(pdMS_TO_TICKS(300));
-		//motor_send_msg(&flushBuff[0], 1);
-	}
-
-	motor_send_msg(&runBuff[0], 1);
-	for (int ii=1023; ii >=0; ii--) {
-
-		vTaskDelay(pdMS_TO_TICKS(10));
-		//motor_send_msg(&flushBuff[0], 1);
-		motor_set_torque(ii);
-	}
-
-	motor_send_msg(&stopBuff[0], 1);
 	for (;;) {
 		vTaskDelay(pdMS_TO_TICKS(300));
-		//motor_send_msg(&flushBuff[0], 1);
+		motor_send_msg(&flushBuff[0], 1);
+		motor_send_msg(&clearBuff[0], 1);
 	}
 }
 

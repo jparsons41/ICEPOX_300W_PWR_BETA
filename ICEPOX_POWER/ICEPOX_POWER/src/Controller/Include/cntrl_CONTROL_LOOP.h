@@ -104,7 +104,7 @@ static I2CDac_cmd_t xI2CDacCmd = {
 };
 
 /*scales 8-bit PWM command from controller (0..255) to duty cycle (0..100%)*/
-#define PWM_CMD_TO_DUTY(x)				( (uint16_t) ( (double) x * (100.0 / 255.0) ) )  /*output is 0..100 % to be passed to PWM module*/
+#define PWM_CMD_TO_DUTY(x)				( (uint16_t) ( (double) x * (1023 / 255.0) ) )  /*output is 0..100 % to be passed to PWM module*/
 
 #define BATT_OPEN_COUNTER_MAX				 10
 #define BATT_OVERVOLT_COUNTER_MAX			 10				//
