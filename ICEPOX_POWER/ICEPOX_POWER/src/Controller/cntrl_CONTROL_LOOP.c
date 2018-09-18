@@ -179,9 +179,10 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 
 	static uint16_t incr = 0;
 
-	//if (incr== 0) printf(" %i (mA)\r\n", ILOAD_COUNT_TO_MA(gbl_AnalogIn.ain2_ILoadMeas));
-	//incr++;
-	//incr %= 20;
+	if (incr== 0) printf("vDCDC: %u mV (%u),\tvBatt: %u mV (%u),\tvAlt: %u mV (%u)\r\n", DCDCVmon_mV, gbl_AnalogIn.ain1_DCDCVmon, VBattery_mV, gbl_AnalogIn.ain5_VBattery, AltUnregVmon_mV, gbl_AnalogIn.ain6_AltUnregVmon);
+	//if (incr== 0) printf("vDCDC: %u, vBatt: %u, vAlt: %u\r\n", gbl_AnalogIn.ain1_DCDCVmon, gbl_AnalogIn.ain5_VBattery, gbl_AnalogIn.ain6_AltUnregVmon);
+	incr++;
+	incr %= 20;
 
 
 
@@ -500,7 +501,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	port_pin_set_output_level(MOTOR_DIR, OUT_motor_dir);							/*Motor DIR (OUTPUT),  PB23*/
 	port_pin_set_output_level(OUTPUT_EN, OUT_output_en);							/*Output EN (OUTPUT),  PA27*/
 	port_pin_set_output_level(BATTERY_EN, OUT_battery_en);							/*Battery EN (OUTPUT), PB30 */
-	//port_pin_set_output_level(BATTERY_CHARGE_EN, BATTERY_CHARGE_EN_ACTIVE);					/*Battery RUN/CHARGE (OUTPUT), PB31 */
+	port_pin_set_output_level(BATTERY_CHARGE_EN, OUT_charge_en);					/*Battery RUN/CHARGE (OUTPUT), PB31 */
 
 	static uint32_t temp_oneShot = 0;
 
@@ -534,8 +535,8 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 	static uint8_t theLast = 0;
-	if (gbl_PwrCmd.motor != theLast) {		// lmp gbl needs to be changed back to 'motor_cmd' to run through the safety checks
-		motor_set_torque((uint16_t)PWM_CMD_TO_DUTY(gbl_PwrCmd.motor));
+	if (gbl_PwrCmd.motor != theLast) {
+		motor_set_torque((uint16_t)PWM_CMD_TO_DUTY(motor_cmd));
 		theLast = gbl_PwrCmd.motor;
 	}//end if motor_cmd
 

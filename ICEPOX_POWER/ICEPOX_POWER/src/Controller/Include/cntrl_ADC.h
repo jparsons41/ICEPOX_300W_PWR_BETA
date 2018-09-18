@@ -73,8 +73,8 @@
 #define DCDC_VMON_MV_TO_MV(x)			( (uint16_t) ( (double) x / DCDC_VMON_DIV))     /*converts ADC mv to 28V bus monitor volts, about factor of 9.4*/
 
 /*Calibrated count to scaleDCDC_Vmon*/
-#define DCDC_VMON_DIV_MULTIPLIER		( (double) (1.3952) ) /*m for mx+b for count to Vmon curve*/
-#define DCDC_VMON_DIV_OFFSET			( (double) (-32026) ) /*b for mx+b for count to Vmon curve*/
+#define DCDC_VMON_DIV_MULTIPLIER		( (double) (1.322) ) /*m for mx+b for count to Vmon curve*/
+#define DCDC_VMON_DIV_OFFSET			( (double) (-35084) ) /*b for mx+b for count to Vmon curve*/
 #define DCDC_VMON_COUNT_TO_MV(x)		( (uint16_t) ((x * DCDC_VMON_DIV_MULTIPLIER) + DCDC_VMON_DIV_OFFSET))     /*output bat vmon in mV*/
 
 
@@ -137,8 +137,8 @@
 #define ALTV_VMON_MV_TO_MV(x)			( (uint16_t) ( (double) x / ALTV_VMON_DIV))     /*output v_unreg in mV*/
 
 /*Calibrated count to scale ALT_Unreg_Vmon*/
-#define ALTV_VMON_DIV_MULTIPLIER		( (double) (1.0541) ) /*m for mx+b for count to Vmon curve*/
-#define ALTV_VMON_DIV_OFFSET			( (double) (-2330.4) ) /*b for mx+b for count to Vmon curve*/
+#define ALTV_VMON_DIV_MULTIPLIER		( (double) (0.84027) ) /*m for mx+b for count to Vmon curve*/
+#define ALTV_VMON_DIV_OFFSET			( (double) (-153.8165) ) /*b for mx+b for count to Vmon curve*/
 #define ALTV_VMON_COUNT_TO_MV(x)		( (uint16_t) ((x * ALTV_VMON_DIV_MULTIPLIER) + ALTV_VMON_DIV_OFFSET))     /*output bat vmon in mV*/
 
 
