@@ -171,11 +171,13 @@ void motor_task(void *p) {
 
 
 void motor_send_msg(uint8_t *buff, uint32_t length) {
+	uint8_t retBuff[2] = {0xFF, 0xFF};
 	for (uint i=0; i<length; i++) {
 		//delay_us(50);
 		spi_select_slave(&bldc_spi_master_instance, &bldc_slave, true);
-		spi_write_buffer_wait(&bldc_spi_master_instance, &buff[i*2], 2);
+		spi_transceive_buffer_wait(&bldc_spi_master_instance, &buff[i*2], &retBuff[0], 2);
 		spi_select_slave(&bldc_spi_master_instance, &bldc_slave, false);
+		printf("-- Motor  :  retBuff = %#x, %#x\n", retBuff[0], retBuff[1]);
 	}
 }
 
