@@ -501,7 +501,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	port_pin_set_output_level(MOTOR_DIR, OUT_motor_dir);							/*Motor DIR (OUTPUT),  PB23*/
 	port_pin_set_output_level(OUTPUT_EN, OUT_output_en);							/*Output EN (OUTPUT),  PA27*/
 	port_pin_set_output_level(BATTERY_EN, OUT_battery_en);							/*Battery EN (OUTPUT), PB30 */
-	port_pin_set_output_level(BATTERY_CHARGE_EN, OUT_charge_en);					/*Battery RUN/CHARGE (OUTPUT), PB31 */
+	//port_pin_set_output_level(BATTERY_CHARGE_EN, BATTERY_CHARGE_EN_ACTIVE);					/*Battery RUN/CHARGE (OUTPUT), PB31 */
 
 	static uint32_t temp_oneShot = 0;
 
