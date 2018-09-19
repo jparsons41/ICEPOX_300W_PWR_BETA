@@ -41,7 +41,7 @@ static uint8_t cfgBuff[BLDC_CFG_LEN * 2] = {	// config register values to initia
 			0x95,0xE0,  // r18
 			0x9C,0xA4,  // r19
 			0xA4,0x1E,  // r20
-			0xAE,0x3F,  // r21
+			0xAE,0x39,  // r21
 			0xB4,0x08,  // r22
 			0xBC,0x0F,  // r23
 			0xC4,0x00,  // r24
@@ -50,7 +50,7 @@ static uint8_t cfgBuff[BLDC_CFG_LEN * 2] = {	// config register values to initia
 			0xDC,0x05,  // r27
 			0xE6,0x00,  // r28
 			0xEC,0x81,  // r29  check
-			0xF7,0xFF	// r30
+			0xF1,0x03	// r30
 		};
 
 
@@ -144,10 +144,10 @@ void motor_set_torque(uint16_t trqVal) {
 void motor_task(void *p) {
 	UNUSED(p);
 
-	vTaskDelay(pdMS_TO_TICKS(250));
-	#if (MOTOR_CNTRLR_SET_CONFIGS)
+	vTaskDelay(pdMS_TO_TICKS(2000));
+	//#if (MOTOR_CNTRLR_SET_CONFIGS)
 	motor_set_cfg();
-	#endif
+	//#endif
 
 	motor_send_msg(&clearBuff[0], 1);
 	motorFuncBuff[1] = 0x00;
@@ -193,12 +193,16 @@ void motor_set_cfg (void) {
 	//vTaskDelay(pdMS_TO_TICKS(10));
 
 	// write configs
-	motor_send_msg(&cfgBuff[0], BLDC_CFG_LEN);
+	motor_send_msg(&cfgBuff[0], 31);
 
 	// delay 10 ms
 	//vTaskDelay(pdMS_TO_TICKS(10));
 
+	// 0xC400   nvm write = 01 to setup for nvm write
+	flushBuff[0] = 0xC2;
+	motor_send_msg(&flushBuff[0], 1);
 	// 0xC400   nvm write = 10 and writes configs to nvm
+	flushBuff[0] = 0xC4;
 	motor_send_msg(&flushBuff[0], 1);
 	// may need watchdog spam
 

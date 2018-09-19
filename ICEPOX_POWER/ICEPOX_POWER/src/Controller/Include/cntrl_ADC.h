@@ -112,7 +112,7 @@
 
 /*Calibrated count to scale iLoad_Measn*/
 #define IBAT_DIV_MULTIPLIER		( (double) (-.7088) ) /*m for mx+b for count to Vmon curve*/
-#define IBAT_DIV_OFFSET			( (double) (25913) ) /*b for mx+b for count to Vmon curve*/
+#define IBAT_DIV_OFFSET			( (double) (25750) ) /*b for mx+b for count to Vmon curve*/
 #define IBAT_COUNT_TO_MV(x)		( (int16_t) ((x * IBAT_DIV_MULTIPLIER) + IBAT_DIV_OFFSET))     /*output bat vmon in mV*/
 
 
@@ -138,7 +138,7 @@
 
 /*Calibrated count to scale ALT_Unreg_Vmon*/
 #define ALTV_VMON_DIV_MULTIPLIER		( (double) (0.84027) ) /*m for mx+b for count to Vmon curve*/
-#define ALTV_VMON_DIV_OFFSET			( (double) (-153.8165) ) /*b for mx+b for count to Vmon curve*/
+#define ALTV_VMON_DIV_OFFSET			( (double) (253.8165) ) /*b for mx+b for count to Vmon curve*/
 #define ALTV_VMON_COUNT_TO_MV(x)		( (uint16_t) ((x * ALTV_VMON_DIV_MULTIPLIER) + ALTV_VMON_DIV_OFFSET))     /*output bat vmon in mV*/
 
 
