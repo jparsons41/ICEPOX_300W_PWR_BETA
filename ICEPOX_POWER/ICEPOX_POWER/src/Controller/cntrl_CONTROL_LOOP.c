@@ -179,7 +179,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 
 	static uint16_t incr = 0;
 
-	if (incr== 0) printf("vDCDC: %u mV (%u),\tvBatt: %u mV (%u),\tvAlt: %u mV (%u)\r\n", DCDCVmon_mV, gbl_AnalogIn.ain1_DCDCVmon, VBattery_mV, gbl_AnalogIn.ain5_VBattery, AltUnregVmon_mV, gbl_AnalogIn.ain6_AltUnregVmon);
+	//if (incr== 0) printf("vDCDC: %u mV (%u),\tvBatt: %u mV (%u),\tvAlt: %u mV (%u)\r\n", DCDCVmon_mV, gbl_AnalogIn.ain1_DCDCVmon, VBattery_mV, gbl_AnalogIn.ain5_VBattery, AltUnregVmon_mV, gbl_AnalogIn.ain6_AltUnregVmon);
 	//if (incr== 0) printf("vDCDC: %u, vBatt: %u, vAlt: %u\r\n", gbl_AnalogIn.ain1_DCDCVmon, gbl_AnalogIn.ain5_VBattery, gbl_AnalogIn.ain6_AltUnregVmon);
 	incr++;
 	incr %= 50;
@@ -539,6 +539,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	if (gbl_PwrCmd.motor != theLast) {
 		motor_set_torque((uint16_t)PWM_CMD_TO_DUTY(motor_cmd));		//  this is new function that commands the motor torque for starting. Everythings the same, just new function
 		theLast = gbl_PwrCmd.motor;											// commanding 0 turns off the motor.
+		printf("motor_cmd: %u\r\n", motor_cmd);		// lmp dbg - remove after motor is working
 	}//end if motor_cmd
 
 
@@ -677,13 +678,13 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	static uint32_t uvResetCount = 0;
 	if (gbl_DigInputs.uv_trip == 1) {		// lmp move all of this to better spot
 		uvResetCount++;
-		printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
+		//printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
 	}
 	else uvResetCount = 0;
 	if (uvResetCount >= 200) {
 		uvResetCount = 0;
 		gbl_DigInputs.uv_trip = 0;
-		printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
+		//printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
 	}
 
  }//controlLoop
