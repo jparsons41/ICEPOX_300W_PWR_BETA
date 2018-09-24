@@ -124,6 +124,7 @@ static void prvSetupHardware( void )
 		motor_config();
 	#endif
 
+
 	/*Enable system interrupt*/
 	system_interrupt_enable_global();
 
@@ -240,13 +241,6 @@ int main (void)
 		}//end
 	#endif
 
-	/*starts the process for handling the under voltage trip interrupt*/
-	#if (PROCESS_UNDERVOLTAGE_TRIP_ENABLED)
-		configure_extint_channel();
-		/*configure the callback function*/
-		configure_extint_callbacks();
-	#endif
-
 		/*starts the main CONTROL LOOP TASK*/
 	#if (TASK_CONTROL_LOOP_ENABLED)
 		printf( "-- MAIN - Create the CONTROL LOOP Task ...\r\n" );
@@ -273,6 +267,13 @@ int main (void)
 		usart_disable(&cdc_uart_module);
 		/* Create the task to start the UART Console for the CLI */
 		vUARTCommandConsoleStart(CLI_TASK_STACK_SIZE, CLI_TASK_PRIORITY);
+	#endif
+	
+	/*starts the process for handling the under voltage trip interrupt*/
+	#if (PROCESS_UNDERVOLTAGE_TRIP_ENABLED)
+	configure_extint_channel();
+	/*configure the callback function*/
+	configure_extint_callbacks();
 	#endif
 
 	/* Start the FreeRTOS scheduler. */

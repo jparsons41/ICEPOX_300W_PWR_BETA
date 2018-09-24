@@ -12,6 +12,14 @@
 void configure_extint_channel(void)
  {
 
+	struct port_config uvTrip_pin_conf;
+	port_get_config_defaults(&uvTrip_pin_conf);
+	
+	/* Set buttons as inputs */
+	uvTrip_pin_conf.direction  = PORT_PIN_DIR_INPUT;
+	uvTrip_pin_conf.input_pull = PORT_PIN_PULL_UP;
+	port_pin_set_config(PIN_PA28, &uvTrip_pin_conf);
+	
 	 struct extint_chan_conf config_extint_chan;
 
 	 /*as normal, get configuration defaults*/
@@ -21,7 +29,7 @@ void configure_extint_channel(void)
 	 config_extint_chan.gpio_pin           = PIN_PA28A_EIC_EXTINT8;			/*Undervoltage TRIP, PA28 (pin 53)*/
 	 config_extint_chan.gpio_pin_mux       = MUX_PA28A_EIC_EXTINT8;
 	 config_extint_chan.gpio_pin_pull      = EXTINT_PULL_UP;				/*uses an internal pull up*/
-	 config_extint_chan.detection_criteria = EXTINT_DETECT_BOTH;			/*we want RISING EDGES*/
+	 config_extint_chan.detection_criteria = EXTINT_DETECT_RISING;			/*we want RISING EDGES*/
 	 
 	 /*register the configuration*/
 	 extint_chan_set_config( EXTINT_CH8,  &config_extint_chan);						/*IMPORTANT, set CHANNEL to 8 corresponding to EXTINT[8]*/
@@ -43,23 +51,31 @@ void configure_extint_channel(void)
  }//configure_extint_callbacks
 
 
+/*Output EN (OUTPUT), PA27*/
+#define OUTPUT_EN					  PIN_PA27
+#define OUTPUT_EN_ACTIVE              true
+#define OUTPUT_EN_INACTIVE            !OUTPUT_EN_ACTIVE
 /*-----------------------------------------------------------*/
 /*External interrupt COMPARATOR Under-voltage trip callback (uses EXTINT[8], PA28, Pin 53)*/
  void undervoltage_int_callback(void)
  {
+	 
+	 //printf("..\n");
  
 	/////////////////////////////////////////////////////
 	/* PUT CODE FOR HANDLING UV TRIP HERE!!! */
 	/////////////////////////////////////////////////////
 	/*This is TEMPORARY */
 
-    bool pin_state = port_pin_get_input_level(PIN_PA28);	
-	if (pin_state){
+    //uint8_t pin_state = port_pin_get_input_level(PIN_PA28);	
+	//if (pin_state){
 		gbl_DigInputs.uv_trip = 1;
+		port_pin_set_output_level(OUTPUT_EN, OUTPUT_EN_INACTIVE);	
 		//port_pin_set_output_level(LED_1_PIN, pin_state);
-	} else {
-		//port_pin_set_output_level(LED_1_PIN, pin_state);
-		gbl_DigInputs.uv_trip = 0;
-	}//end if 
+	//} 
+	//else {
+		////port_pin_set_output_level(LED_1_PIN, pin_state);
+		//gbl_DigInputs.uv_trip = 0;
+	//}//end if 
 
 }//undervoltage_int_callback

@@ -201,7 +201,7 @@ void CAN0_Handler(void)
 	if (status & CAN_PROTOCOL_ERROR_ARBITRATION) {
 		can_clear_interrupt_status(&can_instance, CAN_PROTOCOL_ERROR_ARBITRATION);
 		can_stop(&can_instance);
-		printf("!! CAN0_Handler - CAN_PROTOCOL_ERROR_ARBITRATION !! \r\n");
+		//printf("!! CAN0_Handler - CAN_PROTOCOL_ERROR_ARBITRATION !! \r\n"); // lmp uncomment
 		pxMessage->ucFaultCode = MCAN_RX_FLT_CAN_PROTOCOL_ERROR_DATA;
 		clearCANcommands();					// clears gbl CAN commands from memory
 	}
@@ -270,7 +270,7 @@ void xTaskMCAN_RX_Handler( void *pvParameters )
 				can_err_data.last_fault_code = rcv_cntrlbd_data.flt_code;	        /*this is the fault code */
 				can_err_data.fault_status = 1;									    /*set error */
 				/* Create CAN ERROR Handler Task */
-				printf( "-- CAN_RX: - Starting xTaskCAN_ERROR_Handler, Fault Code %d !!!!! ...\r\n",can_err_data.last_fault_code );
+				//printf( "-- CAN_RX: - Starting xTaskCAN_ERROR_Handler, Fault Code %d !!!!! ...\r\n",can_err_data.last_fault_code ); // lmp uncomment
 				if (xTaskCreate(xTaskMCAN_ERROR_Handler, "CAN_ERR_HNDLR", CAN_ERR_HANDLER_TASK_STACK_SIZE, NULL,
 					CAN_ERR_HANDLER_TASK_PRIORITY, NULL) != pdPASS) {
 					printf("-- CAN_RX: - Failed to Create xTaskCAN_ERROR_Handler !!!!! ...\r\n");
@@ -559,7 +559,7 @@ void xTaskMCAN_ERROR_Handler( void *pvParameters )
 
 	can_err_data.retry_cnt++;
 
-	printf ("-- xTaskMCAN_ERROR_Handler - Error handling sequence triggered, count %d ...\r\n",can_err_data.retry_cnt);
+	//printf ("-- xTaskMCAN_ERROR_Handler - Error handling sequence triggered, count %d ...\r\n",can_err_data.retry_cnt); // lmp uncomment
 
 	//shutdown can gracefully (hopefully)
 	can_stop(&can_instance);
@@ -569,16 +569,16 @@ void xTaskMCAN_ERROR_Handler( void *pvParameters )
 							| CAN_PROTOCOL_ERROR_DATA);
 
 	/*delay*/
-	printf ("-- xTaskMCAN_ERROR_Handler - Start Delay %d ...\r\n",500);
+	//printf ("-- xTaskMCAN_ERROR_Handler - Start Delay %d ...\r\n",500); // lmp uncomment
 	vTaskDelay(500);
-	printf ("-- xTaskMCAN_ERROR_Handler - Delay DONE !!! ...\r\n");
+	//printf ("-- xTaskMCAN_ERROR_Handler - Delay DONE !!! ...\r\n"); // lmp uncomment
 
 	/*reconfigure mcan (starting from scratch)*/
-	printf ("-- xTaskMCAN_ERROR_Handler - Reconfigure MCAN ...\r\n");
+	//printf ("-- xTaskMCAN_ERROR_Handler - Reconfigure MCAN ...\r\n"); // lmp uncomment
 	configure_mcan();
 
 	/*start the can process*/
-	printf ("-- xTaskMCAN_ERROR_Handler - Restart MCAN Process ...\r\n");
+	//printf ("-- xTaskMCAN_ERROR_Handler - Restart MCAN Process ...\r\n"); // lmp uncomment
 	can_start(&can_instance);
 
 	vTaskDelete( NULL );

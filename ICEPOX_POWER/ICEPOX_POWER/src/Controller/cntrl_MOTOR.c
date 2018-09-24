@@ -177,7 +177,7 @@ void motor_send_msg(uint8_t *buff, uint32_t length) {
 		spi_select_slave(&bldc_spi_master_instance, &bldc_slave, true);
 		spi_transceive_buffer_wait(&bldc_spi_master_instance, &buff[i*2], &retBuff[0], 2);
 		spi_select_slave(&bldc_spi_master_instance, &bldc_slave, false);
-		printf("-- Motor  :  retBuff = %#x, %#x\n", retBuff[0], retBuff[1]);
+/*		printf("-- Motor  :  retBuff = %#x, %#x\n", retBuff[0], retBuff[1]);*/
 	}
 }
 
