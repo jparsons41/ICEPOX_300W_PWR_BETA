@@ -537,8 +537,8 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	//////////////////////////////////////////////////////////////////////////
 	static uint8_t theLast = 0;
 	if (gbl_PwrCmd.motor != theLast) {
-		motor_set_torque((uint16_t)PWM_CMD_TO_DUTY(motor_cmd));
-		theLast = gbl_PwrCmd.motor;
+		motor_set_torque((uint16_t)PWM_CMD_TO_DUTY(motor_cmd));		//  this is new function that commands the motor torque for starting. Everythings the same, just new function
+		theLast = gbl_PwrCmd.motor;											// commanding 0 turns off the motor.
 	}//end if motor_cmd
 
 
@@ -551,7 +551,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	if (VSet_DAC_mV!=VSet_DAC_mV_last) {
 		//VSet_DAC_mV
 		xI2CDacCmd.uxChId			= 1;			/*Set VSet_DAC_mV Channel*/
-		xI2CDacCmd.uxCounts			= Vset_DAC_mV2cnt(28000);	/*Command counts*/   // lmp change back to var 'VSet_DAC_mV'
+		xI2CDacCmd.uxCounts			= Vset_DAC_mV2cnt(VSet_DAC_mV);	/*Command counts*/   // lmp change back to var 'VSet_DAC_mV' - the external interrupt is only working when higher than 28 V (9/24/18)
 		/*send command to I2C_DAC task*/
 		if (!xQueueSend(xI2CDacQHndle, &xI2CDacCmd, 1000)){
 			printf	("\r\nfail to send to xI2CDacQHndle queue\n");
