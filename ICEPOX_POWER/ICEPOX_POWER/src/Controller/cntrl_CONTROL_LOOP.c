@@ -555,11 +555,11 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 
 
 	static uint8_t theLast = 0;
-	if (gbl_PwrCmd.motor != theLast) {
+	//if () {
 		motor_set_torque((uint16_t)PWM_CMD_TO_DUTY(motor_cmd));		//  this is new function that commands the motor torque for starting. Everythings the same, just new function
 		theLast = gbl_PwrCmd.motor;											// commanding 0 turns off the motor.
 		printf("motor_cmd: %u\r\n", motor_cmd);		// lmp dbg - remove after motor is working
-	}//end if motor_cmd
+	//}//end if motor_cmd
 
 
 
