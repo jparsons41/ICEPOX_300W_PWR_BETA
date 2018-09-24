@@ -386,7 +386,7 @@ void xTaskMCAN_RX_Handler( void *pvParameters )
 						if (gbl_CmdFlags.bat_chrg_en == 1) port_pin_set_output_level(TEMP_BATTERY_CHARGE_EN, true);	// lmp remove for test batt charge only - Actually, we leaving this bypass in
 						else port_pin_set_output_level(TEMP_BATTERY_CHARGE_EN, false);
 
-						printf("--CAN-mtrcmd: %u\r\n", gbl_PwrCmd.motor);
+						//printf("--CAN-mtrcmd: %u\r\n", gbl_PwrCmd.motor);
 
 					break;
 					 /*this decodes MCAN_RX_POWER_CFG_COMMAND 0x41 message*/

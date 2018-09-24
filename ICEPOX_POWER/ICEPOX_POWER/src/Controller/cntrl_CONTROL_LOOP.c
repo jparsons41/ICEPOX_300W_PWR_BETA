@@ -497,6 +497,8 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	///////////////////////////////////////////////////////////////////////////////////////////
 
 
+
+
 	//UPDATE DIO OUTPUT STATES
 	port_pin_set_output_level(MOTOR_DIR, OUT_motor_dir);							/*Motor DIR (OUTPUT),  PB23*/
 	if (gbl_DigInputs.uv_trip == 0) port_pin_set_output_level(OUTPUT_EN, OUT_output_en);							/*Output EN (OUTPUT),  PA27*/
@@ -535,6 +537,23 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
+
+
+	/////////
+	//  FOR DEBUG, REMOVE THIS AFTER MOTOR TURNS
+	static uint8_t nnnn = 1;
+
+	if (nnnn == 0) {
+		if (motor_cmd == 0xFF) motor_cmd = 0;
+		else motor_cmd = 0xFF;
+	}
+
+	nnnn++;
+	nnnn %= 20;
+	////////
+	////////
+
+
 	static uint8_t theLast = 0;
 	if (gbl_PwrCmd.motor != theLast) {
 		motor_set_torque((uint16_t)PWM_CMD_TO_DUTY(motor_cmd));		//  this is new function that commands the motor torque for starting. Everythings the same, just new function
