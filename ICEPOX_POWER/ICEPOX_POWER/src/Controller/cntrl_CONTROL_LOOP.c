@@ -542,14 +542,16 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	/////////
 	//  FOR DEBUG, REMOVE THIS AFTER MOTOR TURNS
 	static uint8_t nnnn = 1;
-
+	static uint8_t onoff = 0;
 	if (nnnn == 0) {
-		if (motor_cmd == 0xFF) motor_cmd = 0;
-		else motor_cmd = 0xFF;
+		if (onoff == 0) onoff = 1;
+		else onoff = 0;
 	}
+	if (onoff == 1) motor_cmd = 0xFF;
+	else motor_cmd = 0x00;
 
 	nnnn++;
-	nnnn %= 20;
+	nnnn %= 200;
 	////////
 	////////
 
