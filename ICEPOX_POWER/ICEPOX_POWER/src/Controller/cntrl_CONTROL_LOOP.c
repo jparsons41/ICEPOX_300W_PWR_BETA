@@ -140,7 +140,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 
 	//latest COMMAND DATA from CONTROLLER in 0x40 MCAN message
 	uint8_t			motor_cmd		= gbl_PwrCmd.motor;						/*motor pwm command 0..255 (0..100%)*/
-	uint16_t		set_v_cmd_mV	= VSET_DAC_CAN_TO_MV(gbl_PwrCmd.set_v);	/* 20V=0 ... 30V =255 set_v_cmd in mV of DC/DC output 20,000 to 29,000 */
+	uint16_t		set_v_cmd_mV	= VSET_DAC_CAN_TO_MV(0xFF);	/* 20V=0 ... 30V =255 set_v_cmd in mV of DC/DC output 20,000 to 29,000 */
 	uint16_t		set_i_cmd_mA	= ISET_DAC_CAN_TO_MA(gbl_PwrCmd.set_i);	/*??A=0 ... 25A=255*/
     uint32_t		CAN_PwrCmd_tic	= gbl_PwrCmd.stats.rcv_tic_this;		// tic count when the Power Command CAN frame was received
 	bool			CTRL_comms_valid= false;								// flag if power board is in communication with controller board
@@ -179,7 +179,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 
 	static uint16_t incr = 0;
 
-	if (incr== 0) printf("vDCDC: %u mV (%u),\tvBatt: %u mV (%u),\tvAlt: %u mV (%u)\r\n", DCDCVmon_mV, gbl_AnalogIn.ain1_DCDCVmon, VBattery_mV, gbl_AnalogIn.ain5_VBattery, AltUnregVmon_mV, gbl_AnalogIn.ain6_AltUnregVmon);
+	//if (incr== 0) printf("vDCDC: %u mV (%u),\tvBatt: %u mV (%u),\tvAlt: %u mV (%u)\r\n", DCDCVmon_mV, gbl_AnalogIn.ain1_DCDCVmon, VBattery_mV, gbl_AnalogIn.ain5_VBattery, AltUnregVmon_mV, gbl_AnalogIn.ain6_AltUnregVmon);
 	//if (incr== 0) printf("vDCDC: %u, vBatt: %u, vAlt: %u\r\n", gbl_AnalogIn.ain1_DCDCVmon, gbl_AnalogIn.ain5_VBattery, gbl_AnalogIn.ain6_AltUnregVmon);
 	incr++;
 	incr %= 50;

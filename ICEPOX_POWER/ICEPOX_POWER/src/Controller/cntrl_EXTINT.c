@@ -69,8 +69,8 @@ void configure_extint_channel(void)
 
     //uint8_t pin_state = port_pin_get_input_level(PIN_PA28);	
 	//if (pin_state){
-		gbl_DigInputs.uv_trip = 1;
-		port_pin_set_output_level(OUTPUT_EN, OUTPUT_EN_INACTIVE);	
+		//gbl_DigInputs.uv_trip = 1;
+		//port_pin_set_output_level(OUTPUT_EN, OUTPUT_EN_INACTIVE);	
 		//port_pin_set_output_level(LED_1_PIN, pin_state);
 	//} 
 	//else {

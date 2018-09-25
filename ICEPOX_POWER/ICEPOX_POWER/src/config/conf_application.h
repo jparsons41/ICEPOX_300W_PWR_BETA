@@ -60,7 +60,7 @@
 
 /* These are PROCESSES (not Dependant on FreeRTOS) -->*/
 #define PROCESS_ADC_ENABLED					( 1 )		/*ADC (SAR) analog data acquisition (high speed MAP sensor)*/
-#define PROCESS_UNDERVOLTAGE_TRIP_ENABLED   ( 1 )		/*Under voltage Trip Comparator, PA28 EXTINT[8]*/
+#define PROCESS_UNDERVOLTAGE_TRIP_ENABLED   ( 0 )		/*Under voltage Trip Comparator, PA28 EXTINT[8]*/
 
 /* The LED to toggle and the rate at which the LED will be toggled. */
 #define LED_TOGGLE_PERIOD		         pdMS_TO_TICKS( 1000)
