@@ -177,12 +177,12 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	Thermistor_C				= 	0;//THERM_MV_TO_DEGC(ain7_Thermistor_mv);															/*PA07_Thermistor cnt->degC * 100 */
 
 
-	static uint16_t incr = 0;
-
-	if (incr== 0) printf("vDCDC: %u mV (%u),\tvBatt: %u mV (%u),\tvAlt: %u mV (%u)\r\n", DCDCVmon_mV, gbl_AnalogIn.ain1_DCDCVmon, VBattery_mV, gbl_AnalogIn.ain5_VBattery, AltUnregVmon_mV, gbl_AnalogIn.ain6_AltUnregVmon);
-	//if (incr== 0) printf("vDCDC: %u, vBatt: %u, vAlt: %u\r\n", gbl_AnalogIn.ain1_DCDCVmon, gbl_AnalogIn.ain5_VBattery, gbl_AnalogIn.ain6_AltUnregVmon);
-	incr++;
-	incr %= 50;
+	//static uint16_t incr = 0;		// lmp used to printf for debugging
+//
+	////if (incr== 0) printf("vDCDC: %u mV (%u),\tvBatt: %u mV (%u),\tvAlt: %u mV (%u)\r\n", DCDCVmon_mV, gbl_AnalogIn.ain1_DCDCVmon, VBattery_mV, gbl_AnalogIn.ain5_VBattery, AltUnregVmon_mV, gbl_AnalogIn.ain6_AltUnregVmon);
+	////if (incr== 0) printf("vDCDC: %u, vBatt: %u, vAlt: %u\r\n", gbl_AnalogIn.ain1_DCDCVmon, gbl_AnalogIn.ain5_VBattery, gbl_AnalogIn.ain6_AltUnregVmon);
+	//incr++;
+	//incr %= 50;
 
 
 
@@ -483,7 +483,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 
 
 	VSet_DAC_mV = set_v_cmd_mV;	// sets the DC/DC output voltage based on CAN command for all states
-	ISet_DAC_mA = 3000; //set_i_cmd_mA;	// sets the DC/DC output current limit based on CAN command for all states
+	ISet_DAC_mA = 24999; //set_i_cmd_mA;	// sets the DC/DC output current limit based on CAN command for all states	// lmp - this was already hard coded to 24999 9/26/2018
 
 		// LOGIC LOGIC LOGIC LOGIC LOGIC LOGIC
 
@@ -499,13 +499,33 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 
 	//UPDATE DIO OUTPUT STATES
 	port_pin_set_output_level(MOTOR_DIR, OUT_motor_dir);							/*Motor DIR (OUTPUT),  PB23*/
-	if (gbl_DigInputs.uv_trip == 0) port_pin_set_output_level(OUTPUT_EN, OUT_output_en);							/*Output EN (OUTPUT),  PA27*/
-	else  port_pin_set_output_level(OUTPUT_EN, OUTPUT_EN_INACTIVE);							/*Output EN (OUTPUT),  PA27*/
+	#if (PROCESS_UNDERVOLTAGE_TRIP_ENABLED)
+		if (gbl_DigInputs.uv_trip == 0) port_pin_set_output_level(OUTPUT_EN, OUT_output_en);							/*Output EN (OUTPUT),  PA27*/
+		else  port_pin_set_output_level(OUTPUT_EN, OUTPUT_EN_INACTIVE);							/*Output EN (OUTPUT),  PA27*/
+	#else
+		port_pin_set_output_level(OUTPUT_EN, OUT_output_en);							/*Output EN (OUTPUT),  PA27*/
+	#endif
 	port_pin_set_output_level(BATTERY_EN, OUT_battery_en);							/*Battery EN (OUTPUT), PB30 */
 	//port_pin_set_output_level(BATTERY_CHARGE_EN, BATTERY_CHARGE_EN_ACTIVE);					/*Battery RUN/CHARGE (OUTPUT), PB31 */
 
-	static uint32_t temp_oneShot = 0;
 
+
+	////////
+	//  lmp - this was added to retry enabling the user output every 5 seconds  // 9/25/2018
+
+	static uint32_t uvResetCount = 0;
+	if (gbl_DigInputs.uv_trip == 1) {
+		uvResetCount++;
+		printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
+	}
+	else uvResetCount = 0;
+	if (uvResetCount >= 200) {
+		uvResetCount = 0;
+		gbl_DigInputs.uv_trip = 0;
+		printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
+	}
+
+	////////
 
 
 
@@ -536,7 +556,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	//////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 	static uint8_t theLast = 0;
-	if (gbl_PwrCmd.motor != theLast) {
+	if (gbl_PwrCmd.motor != theLast) {		// lmp this is the new command to send the torque command to the motor controller via SPI
 		motor_set_torque((uint16_t)PWM_CMD_TO_DUTY(motor_cmd));
 		theLast = gbl_PwrCmd.motor;
 	}//end if motor_cmd
@@ -545,13 +565,14 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 
 
 
+	static uint32_t temp_oneShot = 0;  // lmp - i think I had added this to prevent power on issues to make sure the DAC is updated correctly
 
 
 	//UPDATE DAC COMMANDS
 	if (VSet_DAC_mV!=VSet_DAC_mV_last) {
 		//VSet_DAC_mV
 		xI2CDacCmd.uxChId			= 1;			/*Set VSet_DAC_mV Channel*/
-		xI2CDacCmd.uxCounts			= Vset_DAC_mV2cnt(28000);	/*Command counts*/   // lmp change back to var 'VSet_DAC_mV'
+		xI2CDacCmd.uxCounts			= Vset_DAC_mV2cnt(VSet_DAC_mV);	/*Command counts*/
 		/*send command to I2C_DAC task*/
 		if (!xQueueSend(xI2CDacQHndle, &xI2CDacCmd, 1000)){
 			printf	("\r\nfail to send to xI2CDacQHndle queue\n");
@@ -674,17 +695,6 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 									  (gbl_PwrFaultFlags.flt_backfeedWarning		<< 7);   	/*Bit 7 - reserved*/
 
 
-	static uint32_t uvResetCount = 0;
-	if (gbl_DigInputs.uv_trip == 1) {		// lmp move all of this to better spot
-		uvResetCount++;
-		printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
-	}
-	else uvResetCount = 0;
-	if (uvResetCount >= 200) {
-		uvResetCount = 0;
-		gbl_DigInputs.uv_trip = 0;
-		printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
-	}
 
  }//controlLoop
 
