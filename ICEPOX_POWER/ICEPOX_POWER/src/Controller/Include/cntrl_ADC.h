@@ -73,8 +73,8 @@
 #define DCDC_VMON_MV_TO_MV(x)			( (uint16_t) ( (double) x / DCDC_VMON_DIV))     /*converts ADC mv to 28V bus monitor volts, about factor of 9.4*/
 
 /*Calibrated count to scaleDCDC_Vmon*/
-#define DCDC_VMON_DIV_MULTIPLIER		( (double) (1.322) ) /*m for mx+b for count to Vmon curve*/
-#define DCDC_VMON_DIV_OFFSET			( (double) (-35084) ) /*b for mx+b for count to Vmon curve*/
+#define DCDC_VMON_DIV_MULTIPLIER		( (double) (1.26698) ) /*m for mx+b for count to Vmon curve*/
+#define DCDC_VMON_DIV_OFFSET			( (double) (-31750) ) /*b for mx+b for count to Vmon curve*/
 #define DCDC_VMON_COUNT_TO_MV(x)		( (uint16_t) ((x * DCDC_VMON_DIV_MULTIPLIER) + DCDC_VMON_DIV_OFFSET))     /*output bat vmon in mV*/
 
 
@@ -125,8 +125,8 @@
 #define BATV_VMON_MV_TO_MV(x)			( (uint16_t) ( (double) x / BATV_VMON_DIV))     /*output bat vmon in mV*/
 
 /* count to scale Bat_Vmon*/
-#define BATV_VMON_DIV_MULTIPLIER		( (double) (.2971) ) /*m for mx+b for count to Vmon curve*/
-#define BATV_VMON_DIV_OFFSET			( (double) (57.931) ) /*b for mx+b for count to Vmon curve*/
+#define BATV_VMON_DIV_MULTIPLIER		( (double) (.259) ) /*m for mx+b for count to Vmon curve*/
+#define BATV_VMON_DIV_OFFSET			( (double) (102) ) /*b for mx+b for count to Vmon curve*/
 #define BATV_VMON_COUNT_TO_MV(x)		( (uint16_t) ((x * BATV_VMON_DIV_MULTIPLIER) + BATV_VMON_DIV_OFFSET))     /*output bat vmon in mV*/
 
 
@@ -137,8 +137,8 @@
 #define ALTV_VMON_MV_TO_MV(x)			( (uint16_t) ( (double) x / ALTV_VMON_DIV))     /*output v_unreg in mV*/
 
 /*Calibrated count to scale ALT_Unreg_Vmon*/
-#define ALTV_VMON_DIV_MULTIPLIER		( (double) (0.84027) ) /*m for mx+b for count to Vmon curve*/
-#define ALTV_VMON_DIV_OFFSET			( (double) (253.8165) ) /*b for mx+b for count to Vmon curve*/
+#define ALTV_VMON_DIV_MULTIPLIER		( (double) (0.83) ) /*m for mx+b for count to Vmon curve*/
+#define ALTV_VMON_DIV_OFFSET			( (double) (450) ) /*b for mx+b for count to Vmon curve*/
 #define ALTV_VMON_COUNT_TO_MV(x)		( (uint16_t) ((x * ALTV_VMON_DIV_MULTIPLIER) + ALTV_VMON_DIV_OFFSET))     /*output bat vmon in mV*/
 
 
