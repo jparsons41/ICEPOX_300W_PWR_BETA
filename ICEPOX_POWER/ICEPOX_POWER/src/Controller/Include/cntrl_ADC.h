@@ -60,8 +60,8 @@
 #define DCDC_IMON_MV_TO_MA(x)			( (uint16_t) (( (double) x - DCDC_IMON_OFFSET_MV) * DCDC_IMON_SENSITIVITY)  ) /*scaled mA*/
 
 /*Calibrated count to scale iLoad_Measn*/
-#define DCDC_IMON_DIV_MULTIPLIER		( (double) (.6439) ) /*m for mx+b for count to Vmon curve*/
-#define DCDC_IMON_DIV_OFFSET			( (double) (-1951.6) ) /*b for mx+b for count to Vmon curve*/
+#define DCDC_IMON_DIV_MULTIPLIER		( (double) (.582) ) /*m for mx+b for count to Vmon curve*/
+#define DCDC_IMON_DIV_OFFSET			( (double) (-2750) ) /*b for mx+b for count to Vmon curve*/
 #define DCDC_IMON_COUNT_TO_MV(x)		( (uint16_t) ((x * DCDC_IMON_DIV_MULTIPLIER) + DCDC_IMON_DIV_OFFSET))     /*output bat vmon in mV*/
 
 
@@ -86,8 +86,8 @@
 #define ILOAD_MV_TO_MA(x)				( (uint16_t) (( (double) x - ILOAD_OFFSET_MV) / ILOAD_SENSITIVITY * 1000.0) ) /*Iload in mA*/
 
 /*Calibrated count to scale iLoad_Measn*/
-#define ILOAD_DIV_MULTIPLIER		( (double) (.722) ) /*m for mx+b for count to Vmon curve*/
-#define ILOAD_DIV_OFFSET			( (double) (-26380) ) /*b for mx+b for count to Vmon curve*/
+#define ILOAD_DIV_MULTIPLIER		( (double) (.724) ) /*m for mx+b for count to Vmon curve*/
+#define ILOAD_DIV_OFFSET			( (double) (-26050) ) /*b for mx+b for count to Vmon curve*/
 #define ILOAD_COUNT_TO_MA(x)		( (int16_t) ((x * ILOAD_DIV_MULTIPLIER) + ILOAD_DIV_OFFSET))     /*output bat vmon in mV*/
 
 
@@ -112,7 +112,7 @@
 
 /*Calibrated count to scale iLoad_Measn*/
 #define IBAT_DIV_MULTIPLIER		( (double) (-.7088) ) /*m for mx+b for count to Vmon curve*/
-#define IBAT_DIV_OFFSET			( (double) (25750) ) /*b for mx+b for count to Vmon curve*/
+#define IBAT_DIV_OFFSET			( (double) (25550) ) /*b for mx+b for count to Vmon curve*/
 #define IBAT_COUNT_TO_MV(x)		( (int16_t) ((x * IBAT_DIV_MULTIPLIER) + IBAT_DIV_OFFSET))     /*output bat vmon in mV*/
 
 
