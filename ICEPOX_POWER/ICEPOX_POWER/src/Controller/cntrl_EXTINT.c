@@ -55,27 +55,11 @@ void configure_extint_channel(void)
 #define OUTPUT_EN					  PIN_PA27
 #define OUTPUT_EN_ACTIVE              true
 #define OUTPUT_EN_INACTIVE            !OUTPUT_EN_ACTIVE
+
 /*-----------------------------------------------------------*/
+
 /*External interrupt COMPARATOR Under-voltage trip callback (uses EXTINT[8], PA28, Pin 53)*/
- void undervoltage_int_callback(void)
- {
-	 
-	 //printf("..\n");
- 
-	/////////////////////////////////////////////////////
-	/* PUT CODE FOR HANDLING UV TRIP HERE!!! */
-	/////////////////////////////////////////////////////
-	/*This is TEMPORARY */
-
-    //uint8_t pin_state = port_pin_get_input_level(PIN_PA28);	
-	//if (pin_state){
+ void undervoltage_int_callback(void) {
 		gbl_DigInputs.uv_trip = 1;
-		port_pin_set_output_level(OUTPUT_EN, OUTPUT_EN_INACTIVE);	
-		//port_pin_set_output_level(LED_1_PIN, pin_state);
-	//} 
-	//else {
-		////port_pin_set_output_level(LED_1_PIN, pin_state);
-		//gbl_DigInputs.uv_trip = 0;
-	//}//end if 
-
-}//undervoltage_int_callback
+		port_pin_set_output_level(OUTPUT_EN, OUTPUT_EN_INACTIVE);
+}

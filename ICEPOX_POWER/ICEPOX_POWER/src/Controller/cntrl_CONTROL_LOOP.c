@@ -97,8 +97,8 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
  * \brief This the main process control loop, regulated by the xTaskControlLoop below
  */
  void controlLoop(void){
-	//miscellaneous configs
-	LED_Toggle(LED_RED);
+	 
+	 // lmp rmv dbg code - COMMIT THIS CHANGE
 
 
      //Config COMMAND DATA from CONTROLLER in 0x41 MCAN message
@@ -498,7 +498,10 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 
 
 	//UPDATE DIO OUTPUT STATES
+	//  MOTOR_DIR
 	port_pin_set_output_level(MOTOR_DIR, OUT_motor_dir);							/*Motor DIR (OUTPUT),  PB23*/
+	
+	//  USER LOAD OUPUT_EN
 	#if (PROCESS_UNDERVOLTAGE_TRIP_ENABLED)
 		if (gbl_DigInputs.uv_trip == 0) port_pin_set_output_level(OUTPUT_EN, OUT_output_en);							/*Output EN (OUTPUT),  PA27*/
 		else  port_pin_set_output_level(OUTPUT_EN, OUTPUT_EN_INACTIVE);							/*Output EN (OUTPUT),  PA27*/
@@ -506,6 +509,8 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 		port_pin_set_output_level(OUTPUT_EN, OUT_output_en);							/*Output EN (OUTPUT),  PA27*/
 	#endif
 	port_pin_set_output_level(BATTERY_EN, OUT_battery_en);							/*Battery EN (OUTPUT), PB30 */
+	
+	//  BATT CHARGE ENABLE
 	//port_pin_set_output_level(BATTERY_CHARGE_EN, BATTERY_CHARGE_EN_ACTIVE);					/*Battery RUN/CHARGE (OUTPUT), PB31 */
 
 
@@ -516,14 +521,16 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	static uint32_t uvResetCount = 0;
 	if (gbl_DigInputs.uv_trip == 1) {
 		uvResetCount++;
-		printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
+		//printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
 	}
 	else uvResetCount = 0;
 	if (uvResetCount >= 200) {
 		uvResetCount = 0;
 		gbl_DigInputs.uv_trip = 0;
-		printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
+		//printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
 	}
+	
+	port_pin_set_output_level(LED0_PIN, gbl_DigInputs.uv_trip);	// lmp dbg  -  this can be removed
 
 	////////
 
@@ -720,8 +727,7 @@ void xTaskControlLoop(void *pvParameters)
 		/*https://www.youtube.com/watch?v=PGNiXGX2nLU*/
 		controlLoop();
 
-		/*DEBUG ONLY - toggle the LED*/
-		//LED_Toggle(LED_RED);
+		// lmp rmv dbg code - COMMIT THIS CHANGE
 
 		vTaskDelay(CONTROL_LOOP_TASK_MS);
 
