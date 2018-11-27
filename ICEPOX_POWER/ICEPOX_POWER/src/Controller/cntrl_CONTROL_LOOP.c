@@ -169,7 +169,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	//data scaled
 	DCDCImon_mA					=	limit_int(DCDC_IMON_COUNT_TO_MV(gbl_AnalogIn.ain0_DCDCImon),	0,	30000);							/*PA02_DCDC_Imon cnt->mA*/
 	DCDCVmon_mV					= 	limit_int(DCDC_VMON_COUNT_TO_MV(gbl_AnalogIn.ain1_DCDCVmon),	0,	35000);							/*PA03_DCDC_Vmon cnt->mV*/
-	ILoadMeas_mA				= 	limit_int(ILOAD_COUNT_TO_MA(gbl_AnalogIn.ain2_ILoadMeas) + ILoadMeas_offset_mA,	0,	35000);			/*PB08_iLoad_Meas cnt->mA*/
+	ILoadMeas_mA				= 	limit_int(ILOAD_COUNT_TO_MA(gbl_AnalogIn.ain2_ILoadMeas) - ILoadMeas_offset_mA,	0,	35000);			/*PB08_iLoad_Meas cnt->mA*/
 	IShortMeas_mA				= 	ISHORTCIR_MV_TO_MA(ain3_IShortMeas_mv);																/*PB09_iShortCircuit cnt->mA*/
 	IBattery_mA					= 	limit_int(IBAT_COUNT_TO_MV(gbl_AnalogIn.ain4_IBattery),		-25000, 25000) /*- IBattery_offset_mA*/;	/*PA04_Batt_Imon cnt->mA*/
 	VBattery_mV					= 	limit_int(BATV_VMON_COUNT_TO_MV(gbl_AnalogIn.ain5_VBattery),	0,	20000);							/*PA05_Bat_Vmon cnt->mV*/
@@ -222,7 +222,11 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	if (first_loop) {
 		first_loop++;
 		if (first_loop > 20) {
-			first_loop = 0; // reset first loop flag, code no longer runs
+			//Turn on battery enable to startup system
+			OUT_battery_en = 1; //turn on battery to the rest of the system
+		}
+		
+		if (first_loop > 20) {
 
 			//get current from batt sensor and zero with estimated current from just power PCB 3.3V load
 			IBattery_offset_mA = (IBattery_mA + 200);
@@ -231,9 +235,8 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 			//get current from userload sensor and zero
 			ILoadMeas_offset_mA = ILoadMeas_mA;
 			ILoadMeas_offset_mA = limit_int(ILoadMeas_offset_mA, -1000,1000);
-
-			//Turn on battery enable to startup system
-			OUT_battery_en = 1; //turn on battery to the rest of the system
+			
+			first_loop = 0; // reset first loop flag, code no longer runs
 		}
 
 	} // end first loop

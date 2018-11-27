@@ -55,7 +55,7 @@ uint8_t	 static	state_of_chrg;			/*state of charge*/
 
 //power status state variables
 uint16_t static ILoadMeas_mA;					/*load current, mA*/
-uint16_t static ILoadMeas_offset_mA;			/*load current offset used to tare, mA*/
+int32_t static ILoadMeas_offset_mA;			/*load current offset used to tare, mA*/
 uint16_t static	DCDCVmon_mV;					/*load voltage, mV*/
 uint16_t static	DCDCImon_mA;					/*dc/dc current, mA*/
 uint16_t static	IShortMeas_mA;					/*load current, mA, measured by PROFET for high current */
