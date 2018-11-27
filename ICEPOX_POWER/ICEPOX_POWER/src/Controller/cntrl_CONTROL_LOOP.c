@@ -169,7 +169,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	//data scaled
 	DCDCImon_mA					=	limit_int(DCDC_IMON_COUNT_TO_MV(gbl_AnalogIn.ain0_DCDCImon),	0,	30000);							/*PA02_DCDC_Imon cnt->mA*/
 	DCDCVmon_mV					= 	limit_int(DCDC_VMON_COUNT_TO_MV(gbl_AnalogIn.ain1_DCDCVmon),	0,	35000);							/*PA03_DCDC_Vmon cnt->mV*/
-	ILoadMeas_mA				= 	limit_int(ILOAD_COUNT_TO_MA(gbl_AnalogIn.ain2_ILoadMeas) /*- ILoadMeas_offset_mA*/,	0,	35000);			/*PB08_iLoad_Meas cnt->mA*/
+	ILoadMeas_mA				= 	limit_int(ILOAD_COUNT_TO_MA(gbl_AnalogIn.ain2_ILoadMeas) + ILoadMeas_offset_mA,	0,	35000);			/*PB08_iLoad_Meas cnt->mA*/
 	IShortMeas_mA				= 	ISHORTCIR_MV_TO_MA(ain3_IShortMeas_mv);																/*PB09_iShortCircuit cnt->mA*/
 	IBattery_mA					= 	limit_int(IBAT_COUNT_TO_MV(gbl_AnalogIn.ain4_IBattery),		-25000, 25000) /*- IBattery_offset_mA*/;	/*PA04_Batt_Imon cnt->mA*/
 	VBattery_mV					= 	limit_int(BATV_VMON_COUNT_TO_MV(gbl_AnalogIn.ain5_VBattery),	0,	20000);							/*PA05_Bat_Vmon cnt->mV*/
