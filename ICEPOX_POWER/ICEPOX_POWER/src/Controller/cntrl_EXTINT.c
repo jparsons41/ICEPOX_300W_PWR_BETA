@@ -60,6 +60,6 @@ void configure_extint_channel(void)
 
 /*External interrupt COMPARATOR Under-voltage trip callback (uses EXTINT[8], PA28, Pin 53)*/
  void undervoltage_int_callback(void) {
+	 port_pin_set_output_level(OUTPUT_EN, OUTPUT_EN_INACTIVE);
 		gbl_DigInputs.uv_trip = 1;
-		port_pin_set_output_level(OUTPUT_EN, OUTPUT_EN_INACTIVE);
 }

@@ -379,6 +379,8 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 
 			OUT_battery_en		= 1;				//Power from battery
 			OUT_output_en		= output_en_cmd;	// turn on user load based on CAN command
+			
+			if ((OUT_output_en == 0) && (gbl_DigInputs.uv_trip == 1)) gbl_DigInputs.uv_trip = 0;
 
 
 
@@ -516,19 +518,19 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 
 
 	////////
-	//  lmp - this was added to retry enabling the user output every 5 seconds  // 9/25/2018
-
-	static uint32_t uvResetCount = 0;
-	if (gbl_DigInputs.uv_trip == 1) {
-		uvResetCount++;
-		//printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
-	}
-	else uvResetCount = 0;
-	if (uvResetCount >= 200) {
-		uvResetCount = 0;
-		gbl_DigInputs.uv_trip = 0;
-		//printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
-	}
+	////  lmp - this was added to retry enabling the user output every 5 seconds  // 9/25/2018
+//
+	//static uint32_t uvResetCount = 0;
+	//if (gbl_DigInputs.uv_trip == 1) {
+		//uvResetCount++;
+		////printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
+	//}
+	//else uvResetCount = 0;
+	//if (uvResetCount >= 200) {
+		//uvResetCount = 0;
+		//gbl_DigInputs.uv_trip = 0;
+		////printf("cnt: %u\ttrip: %u\n", uvResetCount, gbl_DigInputs.uv_trip);
+	//}
 	
 	port_pin_set_output_level(LED0_PIN, gbl_DigInputs.uv_trip);	// lmp dbg  -  this can be removed
 
