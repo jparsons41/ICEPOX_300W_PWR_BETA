@@ -559,7 +559,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 //
 //
 		//////////// new
-		//if (xPwmCmd.uxOffOn	== 1)	motor_set_torque((uint16_t)xPwmCmd.uxDuty*10);
+		//if (xPwmCmd.uxOffOn	== 1)	motor_orque((uint16_t)xPwmCmd.uxDuty*10);
 		////else motor_set_torque(0);
 	//}//end if motor_cmd
 
@@ -572,6 +572,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 		motor_set_torque((uint16_t)PWM_CMD_TO_DUTY(motor_cmd));
 		theLast = gbl_PwrCmd.motor;
 	}//end if motor_cmd
+	
 
 
 
