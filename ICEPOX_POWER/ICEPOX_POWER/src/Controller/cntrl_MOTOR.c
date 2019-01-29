@@ -155,11 +155,11 @@ void motor_set_gains()
 	
 	if(integral_gain == 4 && actual_rpm > 1000)
 	{
-		motor_send_msg(I_8_REGISTER_VALUE);
+		motor_send_msg(I_8_REGISTER_VALUE,2);
 	}
 	else if(integral_gain == 8 && actual_rpm < 1000)
 	{
-		motor_send_msg(I_4_REGISTER_VALUE);
+		motor_send_msg(I_4_REGISTER_VALUE,2);
 	}
 }
 

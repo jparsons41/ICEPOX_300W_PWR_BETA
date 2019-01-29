@@ -53,7 +53,8 @@
 #define MCAN_RX_FILTER_0_ID_HI								0x45		/*upper filter index*/
 
 /*message IDs*/
-#define THROTTLE_CMD 0x10
+#define THROTTLE_CMD										0x10
+
 /*because of range, all will end up in FIFO_0*/
 #define MCAN_RX_POWER_COMMAND								0x40		/*control board command and data message id*/
 #define MCAN_RX_POWER_COMMAND_STR							"PWR_CMD"	/*control board message string (for debug)*/
