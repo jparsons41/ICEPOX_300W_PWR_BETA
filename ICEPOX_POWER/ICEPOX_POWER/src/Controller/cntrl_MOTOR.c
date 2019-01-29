@@ -153,7 +153,7 @@ void motor_set_gains()
 	static const I_8_REGISTER_VALUE = 0x5d74;
 	static uint8_t integral_gain = 4;
 	
-	if(integral_gain == 4 && actual_rpm>1000)
+	if(integral_gain == 4 && actual_rpm > 1000)
 	{
 		motor_send_msg(I_8_REGISTER_VALUE);
 	}
@@ -176,10 +176,10 @@ void motor_task(void *p) {
 	motor_send_msg(&motorFuncBuff[0], 1);
 
 	motor_set_torque(0);
-	motor_set_gains();
 
 	for (;;) {
 		vTaskDelay(pdMS_TO_TICKS(300));
+		motor_set_gains();
 		//motor_send_msg(&flushBuff[0], 1);
 		//motor_send_msg(&clearBuff[0], 1);
 	}
