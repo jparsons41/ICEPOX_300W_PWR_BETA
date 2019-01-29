@@ -303,6 +303,10 @@ void xTaskMCAN_RX_Handler( void *pvParameters )
 
 			   /*switch based on message ID, which must have passed the filter*/
 			   switch (ptr_can_rx_q_msg->ucID) {
+				   case THROTTLE_CMD: {
+					   uint16_t rpm = (ptr_can_rx_q_msg->ucData[0]<<8) + ptr_can_rx_q_msg[1];
+					   motor_update_actual_rpm(rpm);
+				   }
 
 				  /*this decodes POWER_COMMAND 0x40 message*/
 				  case MCAN_RX_POWER_COMMAND:
