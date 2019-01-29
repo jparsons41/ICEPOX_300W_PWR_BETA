@@ -44,6 +44,7 @@ extern void motor_set_torque(uint16_t);  // 10 bit value
 extern void motor_config(void);
 extern void motor_task(void*);
 extern void motor_update_actual_rpm(uint16_t rpm);
+extern void motor_set_gains();
 
 
 
