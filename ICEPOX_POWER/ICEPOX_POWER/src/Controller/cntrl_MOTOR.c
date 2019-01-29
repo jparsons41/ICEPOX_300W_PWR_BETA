@@ -18,6 +18,7 @@ static uint8_t preBuff[2] = { 0xC7, 0xFF };
 static uint8_t flushBuff[2] = { 0xC4, 0x00 };
 static uint8_t motorFuncBuff[2] = { 0xDC, 0x05 };
 static uint8_t clearBuff[2] = { 0xE8, 0x01 };
+static uint16_t actual_rpm;
 
 static uint8_t cfgBuff[BLDC_CFG_LEN * 2] = {	// config register values to initialize the bldc controller
 			0x04,0x4d,  // r0
@@ -140,6 +141,11 @@ void motor_set_torque(uint16_t trqVal) {
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
+
+void motor_update_actual_rpm(uint16_t rpm)
+{
+	actual_rpm = rpm;
+}
 
 void motor_task(void *p) {
 	UNUSED(p);
