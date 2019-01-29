@@ -49,10 +49,11 @@
 /*for now, these are totally arbitrary, and since this will be a closed*
 /*network, can really be set to anything...*/
 /*for simplicity, we'll just use standard 11-bit address range*/
-#define MCAN_RX_FILTER_0_ID_LOW								0x40		/*lower filter index*/
+#define MCAN_RX_FILTER_0_ID_LOW								0x01		/*lower filter index*/
 #define MCAN_RX_FILTER_0_ID_HI								0x45		/*upper filter index*/
 
 /*message IDs*/
+#define THROTTLE_CMD 0x10
 /*because of range, all will end up in FIFO_0*/
 #define MCAN_RX_POWER_COMMAND								0x40		/*control board command and data message id*/
 #define MCAN_RX_POWER_COMMAND_STR							"PWR_CMD"	/*control board message string (for debug)*/
