@@ -303,10 +303,10 @@ void xTaskMCAN_RX_Handler( void *pvParameters )
 				mcan_q_putItem(&rx_can_queue, new_rx_data);
 
 			   /*switch based on message ID, which must have passed the filter*/
+					   uint16_t rpm = 0;
 			   switch (ptr_can_rx_q_msg->ucID) {
 				   case THROTTLE_CMD: 
-					   uint16_t rpm = 0;
-					   rpm = (ptr_can_rx_q_msg->ucData[0] << 8) + ptr_can_rx_q_msg[1];
+					   rpm = (uint16_t) (ptr_can_rx_q_msg->ucData[0]) + (((uint16_t)(ptr_can_rx_q_msg->ucData[0]) & 0x000000FF) << 8);
 					   motor_update_actual_rpm(rpm);
 					break;
 

@@ -56,7 +56,7 @@
 #define TASK_PWM_ENABLED					( 1 )	   /*PWM (using TCC peripheral) to driver motor ENABLE signal */
 #define TASK_I2C_DAC_ENABLED				( 1 )	   /*DAC for setting voltage/current levels on three channels */
 #define TASK_CONTROL_LOOP_ENABLED			( 1 )	   /* Main Process Control Loop */
-#define MOTOR_CONTROLLER_ENABLED			( 0 )
+#define MOTOR_CONTROLLER_ENABLED			( 1 )
 
 /* These are PROCESSES (not Dependant on FreeRTOS) -->*/
 #define PROCESS_ADC_ENABLED					( 1 )		/*ADC (SAR) analog data acquisition (high speed MAP sensor)*/

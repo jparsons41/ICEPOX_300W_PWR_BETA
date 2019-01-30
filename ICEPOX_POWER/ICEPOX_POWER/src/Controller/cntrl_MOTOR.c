@@ -18,6 +18,8 @@ static uint8_t preBuff[2] = { 0xC7, 0xFF };
 static uint8_t flushBuff[2] = { 0xC4, 0x00 };
 static uint8_t motorFuncBuff[2] = { 0xDC, 0x05 };
 static uint8_t clearBuff[2] = { 0xE8, 0x01 };
+static const uint8_t I_4_REGISTER_VALUE[2] = {0x5d, 0x72};
+static const uint8_t I_8_REGISTER_VALUE[2] = {0x5d, 0x74};
 static uint16_t actual_rpm;
 
 static uint8_t cfgBuff[BLDC_CFG_LEN * 2] = {	// config register values to initialize the bldc controller
@@ -98,20 +100,20 @@ void motor_config (void) {
 	 return (parity & 0x01);  // only need the low bit to determine odd / even
  }
 
-void motor_set_torque(uint16_t trqVal) {
-	static uint8_t trqBuff[2] = { 0xF7, 0xFF };
+void motor_set_torque(uint16_t torque) {
+	static uint8_t torqueBuffer[2] = { 0xF7, 0xFF };
 	uint32_t parityCount = 0;
-	uint16_t trqCalcd = 0;
+	uint16_t calculatedTorque = 0;
 
-	if (trqVal == 0) {
+	if (torque == 0) {
 		motorFuncBuff[1] = 0x00;
 		motor_send_msg(&motorFuncBuff[0], 1);
 		return;
 	}
 
-	if (trqVal < 0) {
+	if (torque < 0) {
 		motorFuncBuff[1] = 0x02 | (MOTOR_DIR_REVERSE << 2);
-		trqVal *= (-1);
+		torque *= (-1);
 	}
 
 	else {
@@ -121,20 +123,20 @@ void motor_set_torque(uint16_t trqVal) {
 
 
 	motor_send_msg(&motorFuncBuff[0], 1);
-	trqCalcd = 0xF<<12 | (0x0 <<11) | ((0x03FF & trqVal) << 1);
+	calculatedTorque = 0xF<<12 | (0x0 <<11) | ((0x03FF & torque) << 1);
 
-	uint16_t temp = trqCalcd;
+	uint16_t temp = calculatedTorque;
 
 	while ( temp > 0 ) {
 		if ((temp & 0x0001) == 1) parityCount++;
 		temp = temp >> 1;
 	}
-	if ((parityCount & 0x0001) != 1) trqCalcd+=1;
+	if ((parityCount & 0x0001) != 1) calculatedTorque+=1;
 
 
-	trqBuff[0] = trqCalcd >> 8;
-	trqBuff[1] = trqCalcd & 0x00FF;
-	motor_send_msg(&trqBuff[0], 1);
+	torqueBuffer[0] = calculatedTorque >> 8;
+	torqueBuffer[1] = calculatedTorque & 0x00FF;
+	motor_send_msg(&torqueBuffer[0], 1);
 }
 
 
@@ -149,17 +151,15 @@ void motor_update_actual_rpm(uint16_t rpm)
 
 void motor_set_gains()
 {
-	static const I_4_REGISTER_VALUE = 0x5d72;
-	static const I_8_REGISTER_VALUE = 0x5d74;
 	static uint8_t integral_gain = 4;
 	
 	if(integral_gain == 4 && actual_rpm > 1000)
 	{
-		motor_send_msg(I_8_REGISTER_VALUE,2);
+		motor_send_msg(I_8_REGISTER_VALUE,1);
 	}
 	else if(integral_gain == 8 && actual_rpm < 1000)
 	{
-		motor_send_msg(I_4_REGISTER_VALUE,2);
+		motor_send_msg(I_4_REGISTER_VALUE,1);
 	}
 }
 
