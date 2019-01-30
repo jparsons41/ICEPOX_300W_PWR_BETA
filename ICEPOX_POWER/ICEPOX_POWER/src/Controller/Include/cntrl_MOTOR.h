@@ -27,8 +27,8 @@
 #define MOTOR_DIR_REVERSE  (!MOTOR_DIR_FORWARD)
 
 
-#  define CONF_SPI_MASTER_ENABLE  true	// these are asf MACROs for using master/slave
-#  define CONF_SPI_SLAVE_ENABLE  false
+#define CONF_SPI_MASTER_ENABLE  true	// these are asf MACROs for using master/slave
+#define CONF_SPI_SLAVE_ENABLE  false
 
 #define BLDC_SPI_MODULE  SERCOM1
 #define BLDC_SS_PIN  PIN_PA17
