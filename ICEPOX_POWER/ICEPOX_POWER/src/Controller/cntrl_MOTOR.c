@@ -10,7 +10,7 @@
 
 
 static void motor_send_msg(uint8_t *, uint32_t);
-static void motor_set_cfg(void);
+static void motor_configure_registers(void);
 static void motor_set_gains(void);
 
 
@@ -163,7 +163,7 @@ void motor_task(void *p) {
 	UNUSED(p);
 
 	vTaskDelay(pdMS_TO_TICKS(2000));
-	motor_set_cfg();
+	motor_configure_registers();
 
 	motor_send_msg(&clearBuff[0], 1);
 	motorFuncBuff[1] = 0x00;
@@ -181,17 +181,15 @@ void motor_task(void *p) {
 void motor_send_msg(uint8_t *buff, uint32_t length) {
 	uint8_t retBuff[2] = {0xFF, 0xFF};
 	for (uint i=0; i<length; i++) {
-		//delay_us(50);
 		spi_select_slave(&bldc_spi_master_instance, &bldc_slave, true);
 		spi_transceive_buffer_wait(&bldc_spi_master_instance, &buff[i*2], &retBuff[0], 2);
 		spi_select_slave(&bldc_spi_master_instance, &bldc_slave, false);
-/*		printf("-- Motor  :  retBuff = %#x, %#x\n", retBuff[0], retBuff[1]);*/
 	}
 }
 
 
 
-void motor_set_cfg (void) {
+void motor_configure_registers (void) {
 
 
 	// 0xC7FF nvm write bits = 1 1 need to be 1 0 to write
