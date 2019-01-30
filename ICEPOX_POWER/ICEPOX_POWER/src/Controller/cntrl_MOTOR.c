@@ -167,9 +167,7 @@ void motor_task(void *p) {
 	UNUSED(p);
 
 	vTaskDelay(pdMS_TO_TICKS(2000));
-	//#if (MOTOR_CNTRLR_SET_CONFIGS)
 	motor_set_cfg();
-	//#endif
 
 	motor_send_msg(&clearBuff[0], 1);
 	motorFuncBuff[1] = 0x00;
@@ -180,8 +178,6 @@ void motor_task(void *p) {
 	for (;;) {
 		vTaskDelay(pdMS_TO_TICKS(300));
 		motor_set_gains();
-		//motor_send_msg(&flushBuff[0], 1);
-		//motor_send_msg(&clearBuff[0], 1);
 	}
 }
 
@@ -212,14 +208,8 @@ void motor_set_cfg (void) {
 	// 0xC7FF nvm write bits = 1 1 need to be 1 0 to write
 	motor_send_msg(&preBuff[0], 1);
 
-	// delay 10 ms
-	//vTaskDelay(pdMS_TO_TICKS(10));
-
 	// write configs
 	motor_send_msg(&cfgBuff[0], 31);
-
-	// delay 10 ms
-	//vTaskDelay(pdMS_TO_TICKS(10));
 
 	// 0xC400   nvm write = 01 to setup for nvm write
 	flushBuff[0] = 0xC2;
@@ -229,7 +219,6 @@ void motor_set_cfg (void) {
 	motor_send_msg(&flushBuff[0], 1);
 	// may need watchdog spam
 
-	//vTaskDelay(pdMS_TO_TICKS(10));
 
 
 
