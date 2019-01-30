@@ -569,7 +569,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	//////////////////////////////////////////////////////////////////////////
 	static uint8_t theLast = 0;
 	if (gbl_PwrCmd.motor != theLast) {		// lmp this is the new command to send the torque command to the motor controller via SPI
-		motor_set_torque((uint16_t)PWM_CMD_TO_DUTY(motor_cmd));
+		motor_run((uint16_t)PWM_CMD_TO_DUTY(motor_cmd));
 		theLast = gbl_PwrCmd.motor;
 	}//end if motor_cmd
 	

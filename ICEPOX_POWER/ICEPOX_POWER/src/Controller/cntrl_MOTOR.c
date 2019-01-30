@@ -25,9 +25,10 @@ static const uint8_t I_8_REGISTER_VALUE[2] = {0x5d, 0x74};
 static const uint8_t KI_GAIN_VALUES[2][NUM_KI_GAINS] = {{0x5d, 0x72}, {0x5d, 0x74}};
 #define NUM_DESIRED_TORQUES 3
 static const uint16_t DESIRED_TORQUES[NUM_DESIRED_TORQUES] = {512, 712, 1023};
-static const uint8_t STARTUP_COUNT_LIMIT = 4;
+static const uint8_t STARTUP_COUNT_LIMIT = 15;
 static const uint16_t STARTUP_RPM_THRESHOLD = 500;
 static uint16_t actualRpm, startupCount;
+static bool run = false;
 
 static uint8_t registerConfigurationValues[BLDC_CFG_LEN * 2] = {	
 			0x04,0x4d,  // r0
@@ -87,20 +88,10 @@ void motor_config (void) {
 
 
 }
-
- void calculateparity(char val)
+ 
+ void motor_run(uint16_t shouldRun)
  {
-	char scancode = val;
-	 unsigned char parity = 0;
-	 while(scancode > 0)          // if it is 0 there are no more 1's to count
-	 {
-		 if(scancode & 0x01)    //see if LSB is 1
-		 {
-			 parity++;                // why yes it is
-		 }
-		 scancode = scancode >> 1; //shift to next bit
-	 }
-	 return (parity & 0x01);  // only need the low bit to determine odd / even
+	run = (shouldRun > 0);
  }
 
 void motor_set_torque(uint16_t torque) {
@@ -186,7 +177,8 @@ void motor_run_startup_cycle()
 	}
 	else if (actualRpm >= STARTUP_RPM_THRESHOLD)
 	{
-		//do nothing, we have achieved startup
+		static uint8_t I_GAIN_8[2] = {0x5d, 0x74};
+		motor_send_msg(I_GAIN_8, 1);//set i gain to 8
 	}
 	
 	
@@ -206,7 +198,14 @@ void motor_task(void *p) {
 
 	for (;;) {
 		vTaskDelay(pdMS_TO_TICKS(300));
-		motor_run_startup_cycle();
+		if(run)
+		{
+			motor_run_startup_cycle();
+		}
+		else
+		{
+			motor_set_torque(0);	
+		}
 	}
 }
 
