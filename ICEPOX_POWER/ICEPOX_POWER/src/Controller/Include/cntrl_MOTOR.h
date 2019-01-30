@@ -15,9 +15,6 @@
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
 #include "task.h"
-#include "timers.h"
-#include "queue.h"
-#include "semphr.h"
 
 
 #define MOTOR_WRITE_CONFIG_ENABLED 1
