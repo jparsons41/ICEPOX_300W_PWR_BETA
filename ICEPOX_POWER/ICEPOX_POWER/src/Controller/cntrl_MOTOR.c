@@ -21,8 +21,12 @@ static uint8_t motorFuncBuff[2] = { 0xDC, 0x05 };
 static uint8_t clearBuff[2] = { 0xE8, 0x01 };
 static const uint8_t I_4_REGISTER_VALUE[2] = {0x5d, 0x72};
 static const uint8_t I_8_REGISTER_VALUE[2] = {0x5d, 0x74};
-#define STARTUP_INTEGRAL_GAIN 4
-#define STEADY_STATE_INTEGRAL_GAIN 8
+#define NUM_KI_GAINS 2
+static const uint8_t KI_GAIN_VALUES[2][NUM_KI_GAINS] = {{0x5d, 0x72}, {0x5d, 0x74}};
+#define NUM_DESIRED_TORQUES 3
+static const uint16_t DESIRED_TORQUES[NUM_DESIRED_TORQUES] = {512, 712, 1023};
+static const uint8_t STARTUP_COUNT_LIMIT = 4;
+static const uint16_t STARTUP_RPM_THRESHOLD = 500;
 static uint16_t actualRpm, startupCount;
 
 static uint8_t registerConfigurationValues[BLDC_CFG_LEN * 2] = {	
@@ -144,19 +148,48 @@ void motor_update_actual_rpm(uint16_t rpm)
 	actualRpm = rpm;
 }
 
-void motor_set_gains()
+
+void motor_run_startup_cycle()
 {
-	static uint8_t integralGain = STARTUP_INTEGRAL_GAIN;
-	static uint16_t STARTUP_RPM = 1000;
+	static uint8_t desiredTorqueIndex = 0;
+	static uint8_t KiIndex = 0;
+	static uint8_t startupCount = 0;
 	
-	if(integralGain == STARTUP_INTEGRAL_GAIN && actualRpm > STARTUP_RPM)
+	if(startupCount == 0)
 	{
-		motor_send_msg(I_8_REGISTER_VALUE,1);
+		motor_send_msg(KI_GAIN_VALUES[KiIndex], 1);
+		motor_set_torque(DESIRED_TORQUES[desiredTorqueIndex]);
+		startupCount++;
 	}
-	else if(integralGain == STEADY_STATE_INTEGRAL_GAIN && actualRpm < STARTUP_RPM)
+	else if (startupCount <= STARTUP_COUNT_LIMIT)
 	{
-		motor_send_msg(I_4_REGISTER_VALUE,1);
+		startupCount++;
 	}
+	else if (actualRpm < STARTUP_RPM_THRESHOLD)
+	{
+		motor_set_torque(0);
+		startupCount = 0;
+		if(desiredTorqueIndex < NUM_DESIRED_TORQUES)
+		{
+			desiredTorqueIndex++;
+		}
+		else if(KiIndex < NUM_KI_GAINS)
+		{
+			desiredTorqueIndex = 0;
+			KiIndex++;
+		}
+		else if(desiredTorqueIndex == NUM_DESIRED_TORQUES && KiIndex == NUM_KI_GAINS)
+		{
+			desiredTorqueIndex = 0;
+			KiIndex = 0;
+		}
+	}
+	else if (actualRpm >= STARTUP_RPM_THRESHOLD)
+	{
+		//do nothing, we have achieved startup
+	}
+	
+	
 }
 
 void motor_task(void *p) {
@@ -173,8 +206,7 @@ void motor_task(void *p) {
 
 	for (;;) {
 		vTaskDelay(pdMS_TO_TICKS(300));
-		startupCount++;
-		motor_set_gains();
+		motor_run_startup_cycle();
 	}
 }
 
