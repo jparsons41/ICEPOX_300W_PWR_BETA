@@ -23,7 +23,7 @@ static const uint8_t I_4_REGISTER_VALUE[2] = {0x5d, 0x72};
 static const uint8_t I_8_REGISTER_VALUE[2] = {0x5d, 0x74};
 #define STARTUP_INTEGRAL_GAIN 4
 #define STEADY_STATE_INTEGRAL_GAIN 8
-static uint16_t actualRpm;
+static uint16_t actualRpm, startupCount;
 
 static uint8_t registerConfigurationValues[BLDC_CFG_LEN * 2] = {	
 			0x04,0x4d,  // r0
@@ -173,6 +173,7 @@ void motor_task(void *p) {
 
 	for (;;) {
 		vTaskDelay(pdMS_TO_TICKS(300));
+		startupCount++;
 		motor_set_gains();
 	}
 }
@@ -188,10 +189,8 @@ void motor_send_msg(uint8_t *buff, uint32_t length) {
 }
 
 
-
-void motor_configure_registers (void) {
-
-
+void motor_configure_registers (void) 
+{
 	// 0xC7FF nvm write bits = 1 1 need to be 1 0 to write
 	motor_send_msg(&preBuff[0], 1);
 
@@ -204,8 +203,5 @@ void motor_configure_registers (void) {
 	flushBuff[0] = 0xC4;
 	motor_send_msg(&flushBuff[0], 1);
 	// may need watchdog spam
-
-
-
 
 }
