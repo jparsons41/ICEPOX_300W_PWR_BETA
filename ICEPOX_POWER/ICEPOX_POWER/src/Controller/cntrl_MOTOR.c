@@ -11,6 +11,7 @@
 
 static void motor_send_msg(uint8_t *, uint32_t);
 static void motor_set_cfg(void);
+static void motor_set_gains(void);
 
 
 
@@ -27,7 +28,7 @@ static uint8_t registerConfigurationValues[BLDC_CFG_LEN * 2] = {
 			0x0C,0x01,  // r1
 			0x14,0x40,  // r2
 			0x1C,0x00,  // r3
-			0x24,0x01,  // r4		// based on A4964Demo_ds_fast_acc.rst
+			0x24,0x01,  // r4		
 			0x2C,0x00,  // r5
 			0x34,0xFF,  // r6
 			0x3C,0x7F,  // r7
@@ -140,10 +141,6 @@ void motor_set_torque(uint16_t torque) {
 }
 
 
-
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
-
 void motor_update_actual_rpm(uint16_t rpm)
 {
 	actual_rpm = rpm;
@@ -180,13 +177,6 @@ void motor_task(void *p) {
 		motor_set_gains();
 	}
 }
-
-
-
-
-////
-//  PRIVATE METHODS
-
 
 
 void motor_send_msg(uint8_t *buff, uint32_t length) {
