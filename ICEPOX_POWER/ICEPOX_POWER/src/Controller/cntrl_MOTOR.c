@@ -21,7 +21,7 @@ static uint8_t motorFuncBuff[2] = { 0xDC, 0x05 };
 static uint8_t clearBuff[2] = { 0xE8, 0x01 };
 static const uint8_t I_4_REGISTER_VALUE[2] = {0x5d, 0x72};
 static const uint8_t I_8_REGISTER_VALUE[2] = {0x5d, 0x74};
-static uint16_t actual_rpm;
+static uint16_t actualRpm;
 
 static uint8_t registerConfigurationValues[BLDC_CFG_LEN * 2] = {	
 			0x04,0x4d,  // r0
@@ -60,10 +60,6 @@ static uint8_t registerConfigurationValues[BLDC_CFG_LEN * 2] = {
 
 struct spi_module bldc_spi_master_instance;
 struct spi_slave_inst bldc_slave;
-
-
-////
-//  PUBLIC
 
 void motor_config (void) {
 	struct spi_config config_spi_master;
@@ -143,18 +139,18 @@ void motor_set_torque(uint16_t torque) {
 
 void motor_update_actual_rpm(uint16_t rpm)
 {
-	actual_rpm = rpm;
+	actualRpm = rpm;
 }
 
 void motor_set_gains()
 {
-	static uint8_t integral_gain = 4;
+	static uint8_t integralGain = 4;
 	
-	if(integral_gain == 4 && actual_rpm > 1000)
+	if(integralGain == 4 && actualRpm > 1000)
 	{
 		motor_send_msg(I_8_REGISTER_VALUE,1);
 	}
-	else if(integral_gain == 8 && actual_rpm < 1000)
+	else if(integralGain == 8 && actualRpm < 1000)
 	{
 		motor_send_msg(I_4_REGISTER_VALUE,1);
 	}
