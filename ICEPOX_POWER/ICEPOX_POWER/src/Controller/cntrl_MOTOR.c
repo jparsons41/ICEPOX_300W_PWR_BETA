@@ -22,7 +22,7 @@ static const uint8_t I_4_REGISTER_VALUE[2] = {0x5d, 0x72};
 static const uint8_t I_8_REGISTER_VALUE[2] = {0x5d, 0x74};
 static uint16_t actual_rpm;
 
-static uint8_t cfgBuff[BLDC_CFG_LEN * 2] = {	// config register values to initialize the bldc controller
+static uint8_t registerConfigurationValues[BLDC_CFG_LEN * 2] = {	
 			0x04,0x4d,  // r0
 			0x0C,0x01,  // r1
 			0x14,0x40,  // r2
@@ -208,8 +208,7 @@ void motor_set_cfg (void) {
 	// 0xC7FF nvm write bits = 1 1 need to be 1 0 to write
 	motor_send_msg(&preBuff[0], 1);
 
-	// write configs
-	motor_send_msg(&cfgBuff[0], 31);
+	motor_send_msg(&registerConfigurationValues[0], 31);
 
 	// 0xC400   nvm write = 01 to setup for nvm write
 	flushBuff[0] = 0xC2;
