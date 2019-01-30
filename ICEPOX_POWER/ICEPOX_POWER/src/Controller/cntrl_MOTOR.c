@@ -21,6 +21,8 @@ static uint8_t motorFuncBuff[2] = { 0xDC, 0x05 };
 static uint8_t clearBuff[2] = { 0xE8, 0x01 };
 static const uint8_t I_4_REGISTER_VALUE[2] = {0x5d, 0x72};
 static const uint8_t I_8_REGISTER_VALUE[2] = {0x5d, 0x74};
+#define STARTUP_INTEGRAL_GAIN 4
+#define STEADY_STATE_INTEGRAL_GAIN 8
 static uint16_t actualRpm;
 
 static uint8_t registerConfigurationValues[BLDC_CFG_LEN * 2] = {	
@@ -144,13 +146,14 @@ void motor_update_actual_rpm(uint16_t rpm)
 
 void motor_set_gains()
 {
-	static uint8_t integralGain = 4;
+	static uint8_t integralGain = STARTUP_INTEGRAL_GAIN;
+	static uint16_t STARTUP_RPM = 1000;
 	
-	if(integralGain == 4 && actualRpm > 1000)
+	if(integralGain == STARTUP_INTEGRAL_GAIN && actualRpm > STARTUP_RPM)
 	{
 		motor_send_msg(I_8_REGISTER_VALUE,1);
 	}
-	else if(integralGain == 8 && actualRpm < 1000)
+	else if(integralGain == STEADY_STATE_INTEGRAL_GAIN && actualRpm < STARTUP_RPM)
 	{
 		motor_send_msg(I_4_REGISTER_VALUE,1);
 	}
