@@ -25,7 +25,7 @@ static const uint8_t I_8_REGISTER_VALUE[2] = {0x5d, 0x74};
 static const uint8_t KI_GAIN_VALUES[2][NUM_KI_GAINS] = {{0x5d, 0x72}, {0x5d, 0x74}};
 #define NUM_DESIRED_TORQUES 3
 static const uint16_t DESIRED_TORQUES[NUM_DESIRED_TORQUES] = {512, 712, 1023};
-static const uint8_t STARTUP_COUNT_LIMIT = 15;
+static const uint8_t STARTUP_COUNT_LIMIT = 3;
 static const uint16_t STARTUP_RPM_THRESHOLD = 500;
 static uint16_t actualRpm, startupCount;
 static bool run = false;
@@ -144,7 +144,6 @@ void motor_run_startup_cycle()
 {
 	static uint8_t desiredTorqueIndex = 0;
 	static uint8_t KiIndex = 0;
-	static uint8_t startupCount = 0;
 	
 	if(startupCount == 0)
 	{
@@ -204,7 +203,8 @@ void motor_task(void *p) {
 		}
 		else
 		{
-			motor_set_torque(0);	
+			motor_set_torque(0);
+			startupCount = 0;	
 		}
 	}
 }
