@@ -25,7 +25,7 @@ static const uint8_t I_8_REGISTER_VALUE[2] = {0x5d, 0x74};
 static const uint8_t KI_GAIN_VALUES[2][NUM_KI_GAINS] = {{0x5d, 0x72}, {0x5d, 0x74}};
 #define NUM_DESIRED_TORQUES 3
 static const uint16_t DESIRED_TORQUES[NUM_DESIRED_TORQUES] = {512, 712, 1023};
-static const uint8_t STARTUP_COUNT_LIMIT = 3;
+static const uint8_t STARTUP_COUNT_LIMIT = 4;
 static const uint16_t STARTUP_RPM_THRESHOLD = 500;
 static uint16_t actualRpm, startupCount;
 static bool run = false;
