@@ -25,10 +25,10 @@ static uint8_t desiredTorqueIndex = 0;
 static uint8_t KiIndex = 0;
 #define NUM_KI_GAINS 2
 static const uint8_t KI_GAIN_VALUES[2][NUM_KI_GAINS] = {{0x5d, 0x72}, {0x5d, 0x74}};
-#define NUM_DESIRED_TORQUES 3
-static const uint16_t DESIRED_TORQUES[NUM_DESIRED_TORQUES] = {512, 712, 1023};
+#define NUM_DESIRED_TORQUES 4
+static const uint16_t DESIRED_TORQUES[NUM_DESIRED_TORQUES] = {512, 640, 712, 896};
 static const uint8_t STARTUP_COUNT_LIMIT = 4;
-static const uint16_t STARTUP_RPM_THRESHOLD = 600;
+static const uint16_t GAIN_CHANGE_RPM = 300;
 static uint16_t actualRpm, startupCount;
 static bool run = false;
 
@@ -150,11 +150,11 @@ void motor_run_startup_cycle()
 		motor_set_torque(DESIRED_TORQUES[desiredTorqueIndex]);
 		startupCount++;
 	}
-	else if (startupCount <= STARTUP_COUNT_LIMIT && actualRpm < STARTUP_RPM_THRESHOLD)
+	else if (startupCount <= STARTUP_COUNT_LIMIT && actualRpm < GAIN_CHANGE_RPM)
 	{
 		startupCount++;
 	}
-	else if (actualRpm < STARTUP_RPM_THRESHOLD)
+	else if (actualRpm < GAIN_CHANGE_RPM)
 	{
 		motor_set_torque(0);
 		startupCount = 0;
@@ -173,12 +173,13 @@ void motor_run_startup_cycle()
 			KiIndex = 0;
 		}
 	}
-	else if (actualRpm >= STARTUP_RPM_THRESHOLD)
+	else if (actualRpm >= GAIN_CHANGE_RPM)
 	{
 		static uint8_t STEADY_STATE_I_GAIN_8[2] = {0x5d, 0x74};
 		static uint8_t TRANSIENT_I_GAIN_8[2] = {0x65, 0x75};
 		motor_send_msg(STEADY_STATE_I_GAIN_8, 1);//set i gain to 8
 		motor_send_msg(TRANSIENT_I_GAIN_8, 1);
+		motor_set_torque(864);
 	}
 	
 	
