@@ -275,7 +275,7 @@
       </framework-data>
     </AsfFrameworkConfig>
     <avrtool>com.atmel.avrdbg.tool.samice</avrtool>
-    <avrtoolserialnumber>50122221</avrtoolserialnumber>
+    <avrtoolserialnumber>50109450</avrtoolserialnumber>
     <avrdeviceexpectedsignature>0x11010400</avrdeviceexpectedsignature>
     <avrtoolinterface>SWD</avrtoolinterface>
     <com_atmel_avrdbg_tool_samice>
@@ -287,7 +287,7 @@
         <JlinkConfigFile>C:\Users\cemanuel\git\ICEPOX_300W_PWR_BETA\ICEPOX_POWER\ICEPOX_POWER\jlink.config</JlinkConfigFile>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.samice</ToolType>
-      <ToolNumber>50122221</ToolNumber>
+      <ToolNumber>50109450</ToolNumber>
       <ToolName>J-Link</ToolName>
     </com_atmel_avrdbg_tool_samice>
     <avrtoolinterfaceclock>4000000</avrtoolinterfaceclock>

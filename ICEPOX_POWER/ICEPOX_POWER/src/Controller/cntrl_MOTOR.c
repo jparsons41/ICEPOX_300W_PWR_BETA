@@ -24,7 +24,7 @@ static const uint8_t I_8_REGISTER_VALUE[2] = {0x5d, 0x74};
 static uint8_t desiredTorqueIndex = 0;
 static uint8_t KiIndex = 0;
 #define NUM_KI_GAINS 2
-static const uint8_t KI_GAIN_VALUES[2][NUM_KI_GAINS] = {{0x5d, 0x72}, {0x5d, 0x74}};
+static const uint8_t KI_GAIN_VALUES[2][NUM_KI_GAINS] = {{0x5d, 0x74}, {0x5d, 0x74}};
 #define NUM_DESIRED_TORQUES 4
 static const uint16_t DESIRED_TORQUES[NUM_DESIRED_TORQUES] = {512, 640, 712, 896};
 static const uint8_t STARTUP_COUNT_LIMIT = 4;
@@ -44,8 +44,8 @@ static uint8_t registerConfigurationValues[BLDC_CFG_LEN * 2] = {
 			0x44,0x7F,  // r8
 			0x4C,0x00,  // r9
 			0x54,0x00,  // r10
-			0x5D,0x72,  // r11
-			0x65,0x73,  // r12
+			0x5D,0x74,  // r11
+			0x65,0x75,  // r12
 			0x6C,0x3E,  // r13
 			0x74,0x62,  // r14
 			0x7D,0x49,  // r15
@@ -179,7 +179,7 @@ void motor_run_startup_cycle()
 		static uint8_t TRANSIENT_I_GAIN_8[2] = {0x65, 0x75};
 		motor_send_msg(STEADY_STATE_I_GAIN_8, 1);//set i gain to 8
 		motor_send_msg(TRANSIENT_I_GAIN_8, 1);
-		motor_set_torque(864);
+		motor_set_torque(920);
 	}
 	
 	
