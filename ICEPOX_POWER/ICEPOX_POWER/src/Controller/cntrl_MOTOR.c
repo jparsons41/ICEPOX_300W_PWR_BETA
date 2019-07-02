@@ -93,7 +93,15 @@ void motor_config (void) {
  
  void motor_run(uint16_t shouldRun)
  {
-	run = (shouldRun > 0);
+	 static uint16_t runCount = 0;
+	 
+	 if (shouldRun == 0) {
+		 run = false;
+	 }
+	 else {
+		 runCount++;
+		 if (runCount > 8) run = true;
+	 }
  }
 
 void motor_set_torque(uint16_t torque) {
@@ -203,9 +211,9 @@ void motor_task(void *p) {
 		{
 			motor_run_startup_cycle();
 		}
-		else
+		else  //  are we still setting a stale torque value after start up?
 		{
-			motor_set_torque(0);
+			motor_set_torque(0);  // this says no to previous question
 			desiredTorqueIndex = 0;
 			KiIndex = 0; 
 			startupCount = 0;	
