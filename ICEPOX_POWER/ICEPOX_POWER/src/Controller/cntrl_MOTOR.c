@@ -38,7 +38,7 @@ static uint8_t startupRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0xb4,0x0b,    //r22
 	0xbc,0x0f,    //r23
 	0xc4,0x00,    //r24
-	0xce,0x81,    //r25
+	0xce,0xa1,    //r25
 	0xd4,0x01,    //r26
 	0xdc,0x14,    //r27
 	0xe6,0x00,    //r28
@@ -71,7 +71,7 @@ static uint8_t steadyStateRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0xb4,0x0b,    //r22
 	0xbc,0x03,    //r23
 	0xc4,0x00,    //r24
-	0xce,0x81,    //r25
+	0xce,0xa1,    //r25
 	0xd5,0x81,    //r26
 	0xdc,0x77,    //r27
 	0xe6,0x00,    //r28
@@ -148,6 +148,8 @@ void step(){
 	if(run == 1){
 		if(startupCount == 0)
 		{
+			port_pin_set_output_level(LIN_PIN, LIN_PIN_INACTIVE);  // LIN pin: 1
+			vTaskDelay(pdMS_TO_TICKS(500));  // delay for wake up
 			motor_configure_registers();
 			motor_set_run_bit(1);
 			motor_set_demand_input(STARTUP_SPEED);
@@ -169,7 +171,10 @@ void step(){
 		}
 	}
 	else {
-		motor_set_run_bit(0);
+		motor_send_msg(&startupRegisterConfigurationValues[27] | 0x0081, 1)  // GTS: 1
+		vTaskDelay(pdMS_TO_TICKS(500));  // delay waiting for sleep
+		port_pin_set_output_level(LIN_PIN, LIN_PIN_ACTIVE);  // LIN pin: 0
+		motor_set_run_bit(0); // this should be ignored since asleep
 		startupCount = 0;
 	}
 }
