@@ -9,6 +9,14 @@
 #ifndef CNTRL_DISCRETE_IO_H_
 #define CNTRL_DISCRETE_IO_H_
 
+
+
+/*Motor DIR (OUTPUT), PB23*/
+#define LIN_PIN					  PIN_PB12
+#define LIN_PIN_ACTIVE              true
+#define LIN_PIN_INACTIVE            !MOTOR_DIR_ACTIVE
+#define LIN_PIN_NAME                "LIN PIN PB12"
+
 /*Motor DIR (OUTPUT), PB23*/
 #define MOTOR_DIR					  PIN_PB23
 #define MOTOR_DIR_ACTIVE              true
