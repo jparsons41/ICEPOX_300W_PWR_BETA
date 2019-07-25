@@ -15,6 +15,13 @@
 	uint8_t i;
 
 	/*for simplicity, we'll use the ASF port IO driver*/
+	
+	
+	/*Configures PORT for LIN PIN*/
+	port_get_config_defaults(&pin);
+	pin.direction = PORT_PIN_DIR_OUTPUT;
+	port_pin_set_config(LIN_PIN, &pin);
+	port_pin_set_output_level(LIN_PIN, LIN_PIN_INACTIVE);
 
 	/*Configures PORT for LED0 (green)*/
 	port_get_config_defaults(&pin);
