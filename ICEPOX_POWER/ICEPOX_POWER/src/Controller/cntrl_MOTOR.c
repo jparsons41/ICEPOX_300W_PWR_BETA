@@ -1,71 +1,83 @@
-/*
- * cntrl_MOTOR.c
- *
- * Created: 9/14/2018 13:58:11
- *  Author: lphillips
-*/
-
-
 #include "cntrl_MOTOR.h"
-
 
 static void motor_send_msg(uint8_t *, uint32_t);
 static void motor_configure_registers(void);
 static void motor_set_gains(void);
+static void motor_set_run_bit(uint8_t);
 
-
-
-static uint8_t preBuff[2] = { 0xC7, 0xFF };
-static uint8_t flushBuff[2] = { 0xC4, 0x00 };
-static uint8_t motorFuncBuff[2] = { 0xDC, 0x05 };
-static uint8_t clearBuff[2] = { 0xE8, 0x01 };
-static const uint8_t I_4_REGISTER_VALUE[2] = {0x5d, 0x72};
-static const uint8_t I_8_REGISTER_VALUE[2] = {0x5d, 0x74};
-static uint8_t desiredTorqueIndex = 0;
-static uint8_t KiIndex = 0;
-#define NUM_KI_GAINS 2
-static const uint8_t KI_GAIN_VALUES[2][NUM_KI_GAINS] = {{0x5d, 0x74}, {0x5d, 0x74}};
-#define NUM_DESIRED_TORQUES 4
-static const uint16_t DESIRED_TORQUES[NUM_DESIRED_TORQUES] = {512, 640, 712, 896};
-static const uint8_t STARTUP_COUNT_LIMIT = 4;
-static const uint16_t GAIN_CHANGE_RPM = 300;
-static uint16_t actualRpm, startupCount;
+static const uint8_t STARTUP_COUNT_LIMIT = 10;
+static const uint8_t RPM_CHECK_TIME = 2;
+static const uint16_t STARTUP_SPEED = 200;
+static const uint16_t SUCCESSFUL_STARTUP_RPM = 1000;
+static uint16_t actualRpm;
 static bool run = false;
 
-static uint8_t registerConfigurationValues[BLDC_CFG_LEN * 2] = {	
-			0x04,0x4d,  // r0
-			0x0C,0x01,  // r1
-			0x14,0x40,  // r2
-			0x1C,0x00,  // r3
-			0x24,0x01,  // r4		
-			0x2C,0x00,  // r5
-			0x34,0xFF,  // r6
-			0x3C,0x7F,  // r7
-			0x44,0x7F,  // r8
-			0x4C,0x00,  // r9
-			0x54,0x00,  // r10
-			0x5D,0x74,  // r11
-			0x65,0x75,  // r12
-			0x6C,0x3E,  // r13
-			0x74,0x62,  // r14
-			0x7D,0x49,  // r15
-			0x84,0x38,  // r16
-			0x8C,0x4E,  // r17
-			0x95,0xE0,  // r18
-			0x9C,0xA4,  // r19
-			0xA4,0x1E,  // r20
-			0xAE,0x3F,  // r21
-			0xB4,0x08,  // r22
-			0xBC,0x0F,  // r23
-			0xC4,0x00,  // r24
-			0xCE,0x84,  // r25
-			0xD4,0x01,  // r26
-			0xDC,0x14,  // r27
-			0xE6,0x00,  // r28
-			0xEC,0x81,  // r29
-			0xF4,0x00	// r30
-		};
-
+static uint8_t startupRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
+	0x06,0x4c,    //r0
+	0x0c,0x01,    //r1
+	0x14,0x40,    //r2
+	0x1c,0x00,    //r3
+	0x24,0x01,    //r4
+	0x2c,0x00,    //r5
+	0x34,0xfe,    //r6
+	0x3d,0x3f,    //r7
+	0x44,0x7f,    //r8
+	0x4c,0x00,    //r9
+	0x54,0x00,    //r10
+	0x5d,0xb1,    //r11
+	0x65,0xb0,    //r12
+	0x6c,0x3e,    //r13
+	0x74,0x62,    //r14
+	0x7c,0x4b,    //r15
+	0x84,0x38,    //r16
+	0x8c,0x4e,    //r17
+	0x94,0xee,    //r18
+	0x9c,0xa8,    //r19
+	0xa4,0x9f,    //r20
+	0xae,0xbe,    //r21
+	0xb4,0x0b,    //r22
+	0xbc,0x0f,    //r23
+	0xc4,0x00,    //r24
+	0xce,0x81,    //r25
+	0xd4,0x01,    //r26
+	0xdc,0x14,    //r27
+	0xe6,0x00,    //r28
+	0xec,0x8e,    //r29
+	0xf5,0x01    //r30
+};
+static uint8_t steadyStateRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
+	0x06,0x9b,    //r0
+	0x0c,0x01,    //r1
+	0x14,0x57,    //r2
+	0x1c,0x00,    //r3
+	0x24,0x01,    //r4
+	0x2c,0x00,    //r5
+	0x35,0x5e,    //r6
+	0x3c,0x3e,    //r7
+	0x44,0x7f,    //r8
+	0x4c,0x00,    //r9
+	0x54,0x00,    //r10
+	0x5d,0xb4,    //r11
+	0x65,0xb5,    //r12
+	0x6c,0x3e,    //r13
+	0x74,0x62,    //r14
+	0x7c,0x4b,    //r15
+	0x84,0x38,    //r16
+	0x8c,0x4e,    //r17
+	0x94,0x03,    //r18
+	0x9c,0xa8,    //r19
+	0xa4,0x9f,    //r20
+	0xae,0xbe,    //r21
+	0xb4,0x0b,    //r22
+	0xbc,0x03,    //r23
+	0xc4,0x00,    //r24
+	0xce,0x81,    //r25
+	0xd5,0x81,    //r26
+	0xdc,0x77,    //r27
+	0xe6,0x00,    //r28
+	0xec,0x8e,    //r29
+	0xf6,0x01    //r30
+};
 
 struct spi_module bldc_spi_master_instance;
 struct spi_slave_inst bldc_slave;
@@ -90,134 +102,90 @@ void motor_config (void) {
 
 
 }
- 
- void motor_run(uint16_t shouldRun)
- {
-	 static uint16_t runCount = 0;
-	 
-	 if (shouldRun == 0) {
-		 run = false;
-	 }
-	 else {
-		 runCount++;
-		 if (runCount > 8) run = true;
-	 }
- }
 
-void motor_set_torque(uint16_t torque) {
-	static uint8_t torqueBuffer[2] = { 0xF7, 0xFF };
-	uint32_t parityCount = 0;
-	uint16_t calculatedTorque = 0;
-
-	if (torque == 0) {
-		motorFuncBuff[1] = 0x00;
-		motor_send_msg(&motorFuncBuff[0], 1);
-		return;
-	}
-
-	if (torque < 0) {
-		motorFuncBuff[1] = 0x02 | (MOTOR_DIR_REVERSE << 2);
-		torque *= (-1);
-	}
-
-	else {
-		motorFuncBuff[1] = 0x02 | (MOTOR_DIR_FORWARD << 2);
-	}
-
-
-
-	motor_send_msg(&motorFuncBuff[0], 1);
-	calculatedTorque = 0xF<<12 | (0x0 <<11) | ((0x03FF & torque) << 1);
-
-	uint16_t temp = calculatedTorque;
-
-	while ( temp > 0 ) {
-		if ((temp & 0x0001) == 1) parityCount++;
-		temp = temp >> 1;
-	}
-	if ((parityCount & 0x0001) != 1) calculatedTorque+=1;
-
-
-	torqueBuffer[0] = calculatedTorque >> 8;
-	torqueBuffer[1] = calculatedTorque & 0x00FF;
-	motor_send_msg(&torqueBuffer[0], 1);
+void motor_run(uint16_t shouldRun)
+{
+	run = (shouldRun > 0);
 }
-
 
 void motor_update_actual_rpm(uint16_t rpm)
 {
 	actualRpm = rpm;
 }
 
+void motor_set_run_bit(uint8_t runFlag){
+	uint8_t motorFuncBuff[2] = { 0xDC, 0x14 };
+	if(runFlag == 1){
+		motorFuncBuff[1] = 0x17;
+	}
+	motor_send_msg(&motorFuncBuff[0], 1);
+}
 
-void motor_run_startup_cycle()
-{	
-	if(startupCount == 0)
-	{
-		motor_send_msg(KI_GAIN_VALUES[KiIndex], 1);
-		motor_set_torque(DESIRED_TORQUES[desiredTorqueIndex]);
-		startupCount++;
+void motor_set_demand_input(uint16_t demand_input) {
+	static uint8_t demandInputBuffer[2] = { 0xF7, 0xFF };
+	uint32_t parityCount = 0;
+	uint16_t calculatedDemandInput = 0;
+
+	calculatedDemandInput = 0xF<<12 | (0x0 <<11) | ((0x03FF & demand_input) << 1);
+
+	uint16_t temp = calculatedDemandInput;
+
+	while ( temp > 0 ) {
+		if ((temp & 0x0001) == 1) parityCount++;
+		temp = temp >> 1;
 	}
-	else if (startupCount <= STARTUP_COUNT_LIMIT && actualRpm < GAIN_CHANGE_RPM)
-	{
-		startupCount++;
+	if ((parityCount & 0x0001) != 1) calculatedDemandInput+=1;
+
+
+	demandInputBuffer[0] = calculatedDemandInput >> 8;
+	demandInputBuffer[1] = calculatedDemandInput & 0x00FF;
+	motor_send_msg(&demandInputBuffer[0], 1);
+}
+
+
+void step(){
+	static uint8_t startupCount = 0;
+	if(run == 1){
+		if(startupCount == 0)
+		{
+			motor_configure_registers();
+			motor_set_run_bit(1);
+			motor_set_demand_input(STARTUP_SPEED);
+		}
+		else if (startupCount >= RPM_CHECK_TIME && actualRpm < SUCCESSFUL_STARTUP_RPM)
+		{
+			motor_set_demand_input(0);
+			startupCount = 0;
+			return;
+		}
+		else if (startupCount == STARTUP_COUNT_LIMIT)
+		{
+			motor_send_msg(&steadyStateRegisterConfigurationValues[0], 31);
+			motor_set_demand_input(STARTUP_SPEED);
+		}
+		
+		if(startupCount <= STARTUP_COUNT_LIMIT){
+			startupCount++;
+		}
 	}
-	else if (actualRpm < GAIN_CHANGE_RPM)
-	{
-		motor_set_torque(0);
+	else {
+		motor_set_run_bit(0);
 		startupCount = 0;
-		if(desiredTorqueIndex < NUM_DESIRED_TORQUES)
-		{
-			desiredTorqueIndex++;
-		}
-		else if(KiIndex < NUM_KI_GAINS)
-		{
-			desiredTorqueIndex = 0;
-			KiIndex++;
-		}
-		else if(desiredTorqueIndex == NUM_DESIRED_TORQUES && KiIndex == NUM_KI_GAINS)
-		{
-			desiredTorqueIndex = 0;
-			KiIndex = 0;
-		}
 	}
-	else if (actualRpm >= GAIN_CHANGE_RPM)
-	{
-		static uint8_t STEADY_STATE_I_GAIN_8[2] = {0x5d, 0x74};
-		static uint8_t TRANSIENT_I_GAIN_8[2] = {0x65, 0x75};
-		motor_send_msg(STEADY_STATE_I_GAIN_8, 1);//set i gain to 8
-		motor_send_msg(TRANSIENT_I_GAIN_8, 1);
-		motor_set_torque(920);
-	}
-	
-	
 }
 
 void motor_task(void *p) {
 	UNUSED(p);
 
 	vTaskDelay(pdMS_TO_TICKS(2000));
-	motor_configure_registers();
 
+	static uint8_t clearBuff[2] = { 0xE8, 0x01 };
 	motor_send_msg(&clearBuff[0], 1);
-	motorFuncBuff[1] = 0x00;
-	motor_send_msg(&motorFuncBuff[0], 1);
-
-	motor_set_torque(0);
+	motor_set_run_bit(0);
 
 	for (;;) {
 		vTaskDelay(pdMS_TO_TICKS(300));
-		if(run)
-		{
-			motor_run_startup_cycle();
-		}
-		else  //  are we still setting a stale torque value after start up?
-		{
-			motor_set_torque(0);  // this says no to previous question
-			desiredTorqueIndex = 0;
-			KiIndex = 0; 
-			startupCount = 0;	
-		}
+		step();
 	}
 }
 
@@ -232,19 +200,18 @@ void motor_send_msg(uint8_t *buff, uint32_t length) {
 }
 
 
-void motor_configure_registers (void) 
+void motor_configure_registers (void)
 {
-	// 0xC7FF nvm write bits = 1 1 need to be 1 0 to write
+	static uint8_t preBuff[2] = { 0xC7, 0xFF };	// 0xC7FF nvm write bits = 1 1 need to be 1 0 to write
+	static uint8_t flushBuff[2] = { 0xC4, 0x00 };
+	
 	motor_send_msg(&preBuff[0], 1);
+	motor_send_msg(&startupRegisterConfigurationValues[0], 31);
 
-	motor_send_msg(&registerConfigurationValues[0], 31);
-
-	// 0xC400   nvm write = 01 to setup for nvm write
+	// NVM write = 01 to setup for nvm write. Page 72 of A4964 datasheet.
 	flushBuff[0] = 0xC2;
 	motor_send_msg(&flushBuff[0], 1);
-	// 0xC400   nvm write = 10 and writes configs to nvm
+	// NVM write = 10 and writes configs to nvm
 	flushBuff[0] = 0xC4;
 	motor_send_msg(&flushBuff[0], 1);
-	// may need watchdog spam
-
 }
