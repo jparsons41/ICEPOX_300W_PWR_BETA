@@ -1,4 +1,6 @@
 #include "cntrl_MOTOR.h"
+#include "cntrl_DISCRETE_IO.h"
+
 
 static void motor_send_msg(uint8_t *, uint32_t);
 static void motor_configure_registers(void);
@@ -171,7 +173,8 @@ void step(){
 		}
 	}
 	else {
-		motor_send_msg(&startupRegisterConfigurationValues[27] | 0x0081, 1)  // GTS: 1
+		static uint8_t goToSleep[2] = {0xdc, 0x99};
+		motor_send_msg(&goToSleep[0], 1);  // GTS: 1
 		vTaskDelay(pdMS_TO_TICKS(500));  // delay waiting for sleep
 		port_pin_set_output_level(LIN_PIN, LIN_PIN_ACTIVE);  // LIN pin: 0
 		motor_set_run_bit(0); // this should be ignored since asleep
