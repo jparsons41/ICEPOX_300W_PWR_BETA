@@ -21,7 +21,7 @@
 	port_get_config_defaults(&pin);
 	pin.direction = PORT_PIN_DIR_OUTPUT;
 	port_pin_set_config(LIN_PIN, &pin);
-	port_pin_set_output_level(LIN_PIN, LIN_PIN_INACTIVE);
+	port_pin_set_output_level(LIN_PIN, LIN_PIN_ACTIVE);
 
 	/*Configures PORT for LED0 (green)*/
 	port_get_config_defaults(&pin);
