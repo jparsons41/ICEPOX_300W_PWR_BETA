@@ -150,8 +150,10 @@ void step(){
 	if(run == 1){
 		if(startupCount == 0)
 		{
-			//port_pin_set_output_level(LIN_PIN, LIN_PIN_ACTIVE);  // LIN pin: 1
-			//vTaskDelay(pdMS_TO_TICKS(500));  // delay for wake up
+			port_pin_set_output_level(LIN_PIN, LIN_PIN_ACTIVE);  // LIN pin: 0
+			vTaskDelay(pdMS_TO_TICKS(500));  // delay for wake up
+			port_pin_set_output_level(LIN_PIN, LIN_PIN_ACTIVE);  // LIN pin: 1
+			vTaskDelay(pdMS_TO_TICKS(500));  // delay for wake up
 			motor_configure_registers();
 			motor_set_run_bit(1);
 			motor_set_demand_input(STARTUP_SPEED);
@@ -173,10 +175,11 @@ void step(){
 		}
 	}
 	else {
+		vTaskDelay(pdMS_TO_TICKS(1000));  // delay waiting for sleep
 		static uint8_t goToSleep[2] = {0xdc, 0x99};
 		motor_send_msg(&goToSleep[0], 1);  // GTS: 1
 		vTaskDelay(pdMS_TO_TICKS(500));  // delay waiting for sleep
-		port_pin_set_output_level(LIN_PIN, LIN_PIN_INACTIVE);  // LIN pin: 0
+		port_pin_set_output_level(LIN_PIN, LIN_PIN_ACTIVE);  // LIN pin: 1
 		motor_set_run_bit(0); // this should be ignored since asleep
 		startupCount = 0;
 	}
