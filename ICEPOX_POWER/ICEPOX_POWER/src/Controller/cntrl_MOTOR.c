@@ -176,11 +176,11 @@ void step(){
 	}
 	else {
 		vTaskDelay(pdMS_TO_TICKS(1000));  // delay waiting for sleep
-		static uint8_t goToSleep[2] = {0xdd, 0x15};
+		static uint8_t goToSleep[2] = {0xdc, 0x14};
 		motor_send_msg(&goToSleep[0], 1);  // GTS: 0
 		vTaskDelay(pdMS_TO_TICKS(1000));  // delay waiting for sleep
-		goToSleep[0] = 0xdd;
-		goToSleep[1] = 0x94;
+		goToSleep[0] = 0xdc;
+		goToSleep[1] = 0x95;
 		motor_send_msg(&goToSleep[0], 1);  // GTS: 1
 		vTaskDelay(pdMS_TO_TICKS(500));  // delay waiting for sleep
 		port_pin_set_output_level(LIN_PIN, LIN_PIN_ACTIVE);  // LIN pin: 1
