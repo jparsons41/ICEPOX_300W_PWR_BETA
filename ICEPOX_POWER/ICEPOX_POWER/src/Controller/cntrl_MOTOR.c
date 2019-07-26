@@ -150,9 +150,9 @@ void step(){
 	if(run == 1){
 		if(startupCount == 0)
 		{
-			port_pin_set_output_level(LIN_PIN, LIN_PIN_ACTIVE);  // LIN pin: 0
-			vTaskDelay(pdMS_TO_TICKS(500));  // delay for wake up
-			port_pin_set_output_level(LIN_PIN, LIN_PIN_ACTIVE);  // LIN pin: 1
+			//port_pin_set_output_level(LIN_PIN, LIN_PIN_INACTIVE);  // LIN pin: 0
+			//vTaskDelay(pdMS_TO_TICKS(500));  // delay for wake up
+			//port_pin_set_output_level(LIN_PIN, LIN_PIN_ACTIVE);  // LIN pin: 1
 			vTaskDelay(pdMS_TO_TICKS(500));  // delay for wake up
 			motor_configure_registers();
 			motor_set_run_bit(1);
