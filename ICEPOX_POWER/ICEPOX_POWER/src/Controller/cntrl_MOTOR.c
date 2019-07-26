@@ -176,6 +176,9 @@ void step(){
 	}
 	else {
 		vTaskDelay(pdMS_TO_TICKS(1000));  // delay waiting for sleep
+		static uint8_t goToSleep[2] = {0xdd, 0x77};
+		motor_send_msg(&goToSleep[0], 1);  // GTS: 1
+		vTaskDelay(pdMS_TO_TICKS(1000));  // delay waiting for sleep
 		static uint8_t goToSleep[2] = {0xdd, 0x91};
 		motor_send_msg(&goToSleep[0], 1);  // GTS: 1
 		vTaskDelay(pdMS_TO_TICKS(500));  // delay waiting for sleep
