@@ -40,7 +40,7 @@ static uint8_t startupRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0xb4,0x0b,    //r22
 	0xbc,0x0f,    //r23
 	0xc4,0x00,    //r24
-	0xce,0x81,    //r25		DsP via ClancyE, changed from a1 to 81  8/14/2019
+	0xce,0x81,    //r25		DsP via ClancyE, changed from a1 to 81  8/14/2019   (a1 => LWK = 1,  81  => LWK =0
 	0xd4,0x01,    //r26
 	0xdd,0x15,    //r27		DSp via EC, changed from 15 to 14 for parity bit   8/14/2019
 	0xe6,0x00,    //r28
