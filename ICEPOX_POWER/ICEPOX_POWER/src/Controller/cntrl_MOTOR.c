@@ -7,9 +7,9 @@ static void motor_configure_registers(void);
 static void motor_set_gains(void);
 static void motor_set_run_bit(uint8_t);
 
-static const uint8_t STARTUP_COUNT_LIMIT = 10;
-static const uint8_t RPM_CHECK_TIME = 2;
-static const uint16_t STARTUP_SPEED = 200;
+static const uint8_t STARTUP_COUNT_LIMIT = 1000; //  was "10"...What is this...If this is 10 then the system stops even after a successuful cranking event???
+static const uint8_t RPM_CHECK_TIME = 7; // usually 7 in "Tim's" constant current control
+static const uint16_t STARTUP_SPEED = 1023; //startup speed is actually "demand" it is only "speed" in speed control mode
 static const uint16_t SUCCESSFUL_STARTUP_RPM = 1000;
 static uint16_t actualRpm;
 static bool run = false;
@@ -21,8 +21,8 @@ static uint8_t startupRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0x1c,0x00,    //r3
 	0x24,0x01,    //r4
 	0x2c,0x00,    //r5
-	0x34,0xE7,    //r6		Dsp via EC  changed from fe to ff for correct parity  8/14/2019
-	0x3c,0x3e,    //r7
+	0x34,0xFF,    //r6		Dsp via EC  changed from fe to ff for correct parity  8/14/2019
+	0x3d,0x3f,    //r7
 	0x8c,0x7e,    //r8
 	0x4c,0x00,    //r9
 	0x54,0x00,    //r10
@@ -40,7 +40,7 @@ static uint8_t startupRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0xb4,0x0b,    //r22
 	0xbc,0x0f,    //r23
 	0xc4,0x00,    //r24
-	0xce,0xa5,    //r25		DsP via ClancyE, changed from a1 to 81  8/14/2019   (a1 => LWK = 1,  81  => LWK =0
+	0xce,0xa6,    //r25		DsP via ClancyE, changed from a1 to 81  8/14/2019   (a1 => LWK = 1,  81  => LWK =0
 	0xd4,0x01,    //r26
 	0xdd,0x15,    //r27		DSp via EC, changed from 15 to 14 for parity bit   8/14/2019
 	0xe6,0x00,    //r28
@@ -54,8 +54,8 @@ static uint8_t steadyStateRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0x1c,0x00,    //r3
 	0x24,0x01,    //r4
 	0x2c,0x00,    //r5
-	0x34,0xE7,    //r6		Dsp via EC  changed from fe to ff for correct parity  8/14/2019
-	0x3c,0x3e,    //r7
+	0x34,0xFF,    //r6		Dsp via EC  changed from fe to ff for correct parity  8/14/2019
+	0x3d,0x3f,    //r7
 	0x8c,0x7e,    //r8
 	0x4c,0x00,    //r9
 	0x54,0x00,    //r10
@@ -73,9 +73,9 @@ static uint8_t steadyStateRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0xb4,0x0b,    //r22
 	0xbc,0x0f,    //r23
 	0xc4,0x00,    //r24
-	0xce,0xa5,    //r25		DsP via ClancyE, changed from a1 to 81  8/14/2019   (a1 => LWK = 1,  81  => LWK =0
+	0xce,0xa6,    //r25		DsP via ClancyE, changed from a1 to 81  8/14/2019   (a1 => LWK = 1,  81  => LWK =0
 	0xd4,0x01,    //r26
-	0xdd,0x16,    //r27		DSp via EC, changed from 15 to 14 for parity bit   8/14/2019
+	0xdd,0x15,    //r27		DSp via EC, changed from 15 to 14 for parity bit   8/14/2019
 	0xe6,0x00,    //r28
 	0xec,0x8e,    //r29
 	0xf5,0x01    //r30
