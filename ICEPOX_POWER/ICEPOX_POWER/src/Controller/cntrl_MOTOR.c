@@ -22,7 +22,7 @@ static uint8_t startupRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0x24,0x01,    //r4
 	0x2c,0x00,    //r5
 	0x34,0xFF,    //r6		Dsp via EC  changed from fe to ff for correct parity  8/14/2019
-	0x3d,0x3f,    //r7
+	0x3d,0x0C,    //r7      Was 0x3d, 0x3f - this gave VDS limit of 1.55 volts...too much.  adjusting to lower limits.
 	0x8c,0x7e,    //r8
 	0x4c,0x00,    //r9
 	0x54,0x00,    //r10
@@ -38,7 +38,7 @@ static uint8_t startupRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0xa4,0x06,    //r20
 	0xae,0xbe,    //r21
 	0xb4,0x0b,    //r22
-	0xbc,0x0f,    //r23
+	0xbc,0x05,    //r23 was 0xbc 0x0f changing to reduce overspeed limit 10-14-19
 	0xc4,0x00,    //r24
 	0xce,0xa6,    //r25		DsP via ClancyE, changed from a1 to 81  8/14/2019   (a1 => LWK = 1,  81  => LWK =0
 	0xd4,0x01,    //r26
@@ -55,7 +55,7 @@ static uint8_t steadyStateRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0x24,0x01,    //r4
 	0x2c,0x00,    //r5
 	0x34,0xFF,    //r6		Dsp via EC  changed from fe to ff for correct parity  8/14/2019
-	0x3d,0x3f,    //r7
+	0x3d,0x0C,    //r7      Was 0x3d, 0x3f - this gave VDS limit of 1.55 volts...too much.  adjusting to lower limits.
 	0x8c,0x7e,    //r8
 	0x4c,0x00,    //r9
 	0x54,0x00,    //r10
@@ -71,7 +71,7 @@ static uint8_t steadyStateRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0xa4,0x06,    //r20
 	0xae,0xbe,    //r21
 	0xb4,0x0b,    //r22
-	0xbc,0x0f,    //r23
+	0xbc,0x05,    //r23 
 	0xc4,0x00,    //r24
 	0xce,0xa6,    //r25		DsP via ClancyE, changed from a1 to 81  8/14/2019   (a1 => LWK = 1,  81  => LWK =0
 	0xd4,0x01,    //r26
