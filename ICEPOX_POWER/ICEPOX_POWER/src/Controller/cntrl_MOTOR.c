@@ -17,7 +17,7 @@ static bool run = false;
 static uint8_t startupRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0x06,0x10,    //r0
 	0x0c,0x01,    //r1
-	0x14,0x65,    //r2   was 14, 65    increased mosfet switching dead time
+	0x14,0x64,    //r2       increased mosfet switching dead time to 2.5uS
 +	0x1c,0x00,    //r3
 	0x24,0x01,    //r4
 	0x2c,0x00,    //r5
@@ -50,7 +50,7 @@ static uint8_t startupRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 static uint8_t steadyStateRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0x06,0x10,    //r0
 	0x0c,0x01,    //r1
-	0x14,0x65,    //r2   was 14, 65    increased mosfet switching dead time
+	0x14,0x64,    //r2       increased mosfet switching dead time to 2.5uS
 	0x1c,0x00,    //r3
 	0x24,0x01,    //r4
 	0x2c,0x00,    //r5
