@@ -17,30 +17,30 @@ static bool run = false;
 static uint8_t startupRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0x06,0x10,    //r0
 	0x0c,0x01,    //r1
-	0x14,0x49,    //r2
-	0x1c,0x00,    //r3
+	0x14,0x65,    //r2   was 14, 65    increased mosfet switching dead time
++	0x1c,0x00,    //r3
 	0x24,0x01,    //r4
 	0x2c,0x00,    //r5
-	0x34,0xFF,    //r6		Dsp via EC  changed from fe to ff for correct parity  8/14/2019
-	0x3d,0x0C,    //r7      Was 0x3d, 0x3f - this gave VDS limit of 1.55 volts...too much.  adjusting to lower limits.
-	0x8c,0x7e,    //r8
+	0x34,0x7E,    //r6		Dsp via EC  changed from fe to ff for correct parity  8/14/2019    10/18/2019 reduced current limit blanking time to 1 uS from 1.8uS
+	0x3d,0x0A,    //r7      Was 0x3d, 0x3f - this gave VDS limit of 1.55 volts...too much.  adjusting to lower limits. new limit is 0.25V
+    0x45,0x35,    //r8      registry number was wrong (10/18/2019) and the blanking period was very long.  reducing blanking period to minimum
 	0x4c,0x00,    //r9
 	0x54,0x00,    //r10
 	0x5d,0xb1,    //r11
 	0x65,0xb0,    //r12
 	0x6c,0x3e,    //r13
 	0x74,0x62,    //r14
-	0x7c,0x4b,    //r15
+	0x7c,0x00,    //r15    turning off alignment hold at startup and minimizing the the duty cycle
 	0x84,0x38,    //r16
-	0x8c,0x4e,    //r17
+	0x8d,0x01,    //r17   turning ON windmill and minimizing counter rotation braking (it should never be active but just in case)
 	0x94,0x42,    //r18
 	0x9d,0xe2,    //r19
 	0xa4,0x06,    //r20
 	0xae,0xbe,    //r21
-	0xb4,0x0b,    //r22
-	0xbc,0x05,    //r23 was 0xbc 0x0f changing to reduce overspeed limit 10-14-19
+	0xb4,0x86,    //r22     changed resolution from 3.2 Hz to 0.8 Hz
+	0xbc,0x11,    //r23 was 0xbc 0x0f changing to reduce overspeed limit 10-14-19
 	0xc4,0x00,    //r24
-	0xce,0xa6,    //r25		DsP via ClancyE, changed from a1 to 81  8/14/2019   (a1 => LWK = 1,  81  => LWK =0
+	0xce,0xa5,    //r25		DsP via ClancyE, changed from a1 to 81  8/14/2019   (a1 => LWK = 1,  81  => LWK =0   10/18/2019 changed to closed loop current control
 	0xd4,0x01,    //r26
 	0xdd,0x15,    //r27		DSp via EC, changed from 15 to 14 for parity bit   8/14/2019
 	0xe6,0x00,    //r28
@@ -50,30 +50,30 @@ static uint8_t startupRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 static uint8_t steadyStateRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0x06,0x10,    //r0
 	0x0c,0x01,    //r1
-	0x14,0x49,    //r2
+	0x14,0x65,    //r2   was 14, 65    increased mosfet switching dead time
 	0x1c,0x00,    //r3
 	0x24,0x01,    //r4
 	0x2c,0x00,    //r5
-	0x34,0xFF,    //r6		Dsp via EC  changed from fe to ff for correct parity  8/14/2019
-	0x3d,0x0C,    //r7      Was 0x3d, 0x3f - this gave VDS limit of 1.55 volts...too much.  adjusting to lower limits.
-	0x8c,0x7e,    //r8
+	0x34,0x7E,    //r6		Dsp via EC  changed from fe to ff for correct parity  8/14/2019    10/18/2019 reduced current limit blanking time to 1 uS from 1.8uS
+	0x3d,0x0A,    //r7      Was 0x3d, 0x3f - this gave VDS limit of 1.55 volts...too much.  adjusting to lower limits. new limit is 0.25V
+	0x45,0x35,    //r8      registry number was wrong (10/18/2019) and the blanking period was very long.  reducing blanking period to minimum 
 	0x4c,0x00,    //r9
 	0x54,0x00,    //r10
 	0x5d,0xb1,    //r11
 	0x65,0xb0,    //r12
 	0x6c,0x3e,    //r13
 	0x74,0x62,    //r14
-	0x7c,0x4b,    //r15
+	0x7c,0x00,    //r15    turning off alignment hold at startup and minimizing the the duty cycle
 	0x84,0x38,    //r16
-	0x8c,0x4e,    //r17
+	0x8d,0x01,    //r17   turning ON windmill and minimizing counter rotation braking (it should never be active but just in case)
 	0x94,0x42,    //r18
 	0x9d,0xe2,    //r19
 	0xa4,0x06,    //r20
 	0xae,0xbe,    //r21
-	0xb4,0x0b,    //r22
-	0xbc,0x05,    //r23 
+	0xb4,0x86,    //r22     changed resolution from 3.2 Hz to 0.8 Hz
+	0xbc,0x11,    //r23 
 	0xc4,0x00,    //r24
-	0xce,0xa6,    //r25		DsP via ClancyE, changed from a1 to 81  8/14/2019   (a1 => LWK = 1,  81  => LWK =0
+	0xce,0xa5,    //r25		DsP via ClancyE, changed from a1 to 81  8/14/2019   (a1 => LWK = 1,  81  => LWK =0   10/18/2019 changed to closed loop current control
 	0xd4,0x01,    //r26
 	0xdd,0x15,    //r27		DSp via EC, changed from 15 to 14 for parity bit   8/14/2019
 	0xe6,0x00,    //r28
