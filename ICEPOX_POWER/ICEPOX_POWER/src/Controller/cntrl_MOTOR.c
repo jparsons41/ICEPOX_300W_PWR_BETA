@@ -22,7 +22,7 @@ static uint8_t startupRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0x24,0x01,    //r4
 	0x2c,0x00,    //r5
 	0x34,0x7E,    //r6		Dsp via EC  changed from fe to ff for correct parity  8/14/2019    10/18/2019 reduced current limit blanking time to 1 uS from 1.8uS
-	0x3d,0x0A,    //r7      Was 0x3d, 0x3f - this gave VDS limit of 1.55 volts...too much.  adjusting to lower limits. new limit is 0.25V
+	0x3d,0x1B,    //r7      Was 0x3d, 0x3f - this gave VDS limit of 1.55 volts...too much.  adjusting to lower limits. new limit is 0.25V
     0x45,0x35,    //r8      registry number was wrong (10/18/2019) and the blanking period was very long.  reducing blanking period to minimum
 	0x4c,0x00,    //r9
 	0x54,0x00,    //r10
@@ -55,7 +55,7 @@ static uint8_t steadyStateRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0x24,0x01,    //r4
 	0x2c,0x00,    //r5
 	0x34,0x7E,    //r6		Dsp via EC  changed from fe to ff for correct parity  8/14/2019    10/18/2019 reduced current limit blanking time to 1 uS from 1.8uS
-	0x3d,0x0A,    //r7      Was 0x3d, 0x3f - this gave VDS limit of 1.55 volts...too much.  adjusting to lower limits. new limit is 0.25V
+	0x3d,0x1B,    //r7      Was 0x3d, 0x3f - this gave VDS limit of 1.55 volts...too much.  adjusting to lower limits. new limit is 0.25V
 	0x45,0x35,    //r8      registry number was wrong (10/18/2019) and the blanking period was very long.  reducing blanking period to minimum 
 	0x4c,0x00,    //r9
 	0x54,0x00,    //r10
