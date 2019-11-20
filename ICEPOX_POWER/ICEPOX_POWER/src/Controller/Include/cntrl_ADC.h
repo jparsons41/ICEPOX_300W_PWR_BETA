@@ -86,8 +86,8 @@
 #define ILOAD_MV_TO_MA(x)				( (uint16_t) (( (double) x - ILOAD_OFFSET_MV) / ILOAD_SENSITIVITY * 1000.0) ) /*Iload in mA*/
 
 /*Calibrated count to scale iLoad_Measn*/
-#define ILOAD_DIV_MULTIPLIER		( (double) (.724) ) /*m for mx+b for count to Vmon curve*/
-#define ILOAD_DIV_OFFSET			( (double) (-26050) ) /*b for mx+b for count to Vmon curve*/
+#define ILOAD_DIV_MULTIPLIER		( (double) (.362) ) //.724) ) /*m for mx+b for count to Vmon curve*/  halved to .362 for ACS722LLCTR-20AU-T sensor
+#define ILOAD_DIV_OFFSET			( (double) (-2084) )//-26050) ) /*b for mx+b for count to Vmon curve*/  -2084 for above sensor
 #define ILOAD_COUNT_TO_MA(x)		( (int16_t) (((int32_t)x * ILOAD_DIV_MULTIPLIER) + ILOAD_DIV_OFFSET))     /*output bat vmon in mV*/
 
 
