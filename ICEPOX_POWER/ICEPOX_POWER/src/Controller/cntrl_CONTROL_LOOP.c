@@ -318,12 +318,12 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	}
 
 	//loadOvercurrent_state Case
-	if(ILoadMeas_mA > cfg_I_load_max_state){
-		loadOvercurrentCounter_state ++;
-		if (loadOvercurrentCounter_state > LOAD_OVERCURRENT_COUNTER_MAX){
-			loadOvercurrent_state == 1;
-		}
-	}
+	//if(ILoadMeas_mA > cfg_I_load_max_state){
+	//	loadOvercurrentCounter_state ++;						// commented out DSp. 11/21/2019, give capacitive load tolerance with Ed's board protection
+	//	if (loadOvercurrentCounter_state > LOAD_OVERCURRENT_COUNTER_MAX){
+	//		loadOvercurrent_state == 1;
+	//	}
+	//}
 	if(ILoadMeas_mA <= cfg_I_load_max_state){
 		loadOvercurrentCounter_state == 0;
 		loadOvercurrent_state == 0;
