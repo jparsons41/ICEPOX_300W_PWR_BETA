@@ -71,7 +71,7 @@ static uint8_t steadyStateRegisterConfigurationValues[BLDC_CFG_LEN * 2] = {
 	0xa4,0x06,    //r20
 	0xae,0xbe,    //r21
 	0xb4,0x86,    //r22     changed resolution from 3.2 Hz to 0.8 Hz
-	0xbc,0x14,    //r23 
+	0xbc,0x0F,    //r23 
 	0xc4,0x00,    //r24
 	0xce,0xa5,    //r25		DsP via ClancyE, changed from a1 to 81  8/14/2019   (a1 => LWK = 1,  81  => LWK =0   10/18/2019 changed to closed loop current control
 	0xd4,0x01,    //r26
