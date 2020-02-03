@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <math.h>
+#include <arm_math.h>
 
 #include "status_codes.h"
 #include "compiler.h"
