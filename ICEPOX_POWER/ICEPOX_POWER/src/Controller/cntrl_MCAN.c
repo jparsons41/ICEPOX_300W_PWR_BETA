@@ -368,25 +368,6 @@ void xTaskMCAN_RX_Handler( void *pvParameters )
 							gbl_CmdFlags.resv_5				= ((rcv_cntrlbd_data.cmd1.data_val[1] & 0x20) >> 5);
 							gbl_CmdFlags.resv_6				= ((rcv_cntrlbd_data.cmd1.data_val[1] & 0x40) >> 6);
 							gbl_CmdFlags.resv_7				= ((rcv_cntrlbd_data.cmd1.data_val[1] & 0x80) >> 7);
-						} else {
-
-							gbl_PwrCmd.motor				= 0;					//motor command, 8-bits
-							gbl_PwrCmd.cmd					= 0;					//bit mapped command byte, 8-bits
-							gbl_PwrCmd.set_v				= 0,					//voltage set-point byte, 8-bits
-							gbl_PwrCmd.set_i				= 0,					//current set-point, 8-bits
-							gbl_PwrCmd.stats.rcv_tic_last	= 0;					//last time this message was received
-							gbl_PwrCmd.stats.rcv_tic_this	= 0;					//time this messages was received
-							gbl_PwrCmd.stats.fault			= rcv_cntrlbd_data.flt_code;
-							//parse out and set gbl_CmdFlags (this is the same data as in gbl_PwrCmd.cmd)
-							gbl_CmdFlags.sys_run			= 0;	//shutdown flag
-							gbl_CmdFlags.output_en			= 0;	//output enable flag
-							gbl_CmdFlags.bat_chrg_en		= 0;	//battery charge enable flag
-							gbl_CmdFlags.resv_3				= 0;
-							gbl_CmdFlags.resv_4				= 0;
-							gbl_CmdFlags.resv_5				= 0;
-							gbl_CmdFlags.resv_6				= 0;
-							gbl_CmdFlags.resv_7				= 0;
-
 						}
 						#define TEMP_BATTERY_CHARGE_EN			 PIN_PB31
 						if (gbl_CmdFlags.bat_chrg_en == 1) port_pin_set_output_level(TEMP_BATTERY_CHARGE_EN, true);	// lmp brian requested to keep using this bypass
