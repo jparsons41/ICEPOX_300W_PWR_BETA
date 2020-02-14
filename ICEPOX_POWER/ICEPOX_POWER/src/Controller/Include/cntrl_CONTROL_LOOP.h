@@ -37,7 +37,7 @@
  #include "cntrl_EXTINT.h"
  #include "cntrl_MOTOR.h"
 
- #define CONTROL_LOOP_TASK_MS			25
+ #define CONTROL_LOOP_TASK_MS			10
 
 /*init DIO output state variables*/
 /*these are STATIC, i.e. retain their value */
@@ -107,17 +107,17 @@ static I2CDac_cmd_t xI2CDacCmd = {
 /*scales 8-bit PWM command from controller (0..255) to duty cycle (0..100%)*/
 #define PWM_CMD_TO_DUTY(x)				( (uint16_t) ( (double) x * (1023 / 255.0) ) )  /*output is 0..100 % to be passed to PWM module*/
 
-#define BATT_OPEN_COUNTER_MAX				 10
-#define BATT_OVERVOLT_COUNTER_MAX			 10				//
-#define BATT_UNDERVOLT_COUNTER_MAX			 10			//
-#define BATT_OVERCURRENT_COUNTER_MAX		 10			//
-#define ALT_UNDERVOLT_COUNTER_MAX			 10			//
-#define ALT_OVERVOLT_COUNTER_MAX			 10			//
-#define LOAD_OVERCURRENT_COUNTER_MAX	     10				//
-#define TWENTYEIGHT_UNDERVOLT_COUNTER_MAX    10
-#define TWENTYEIGHT_OVERCURRENT_COUNTER_MAX	 10
-#define BACKFEED_COUNTER_MAX		         10          //
-#define IBATT_COUNTER_MAX			         10          //
+#define BATT_OPEN_COUNTER_MAX				 25
+#define BATT_OVERVOLT_COUNTER_MAX			 25				//
+#define BATT_UNDERVOLT_COUNTER_MAX			 25			//
+#define BATT_OVERCURRENT_COUNTER_MAX		 25			//
+#define ALT_UNDERVOLT_COUNTER_MAX			 25			//
+#define ALT_OVERVOLT_COUNTER_MAX			 25			//
+#define LOAD_OVERCURRENT_COUNTER_MAX	     25				//
+#define TWENTYEIGHT_UNDERVOLT_COUNTER_MAX    25
+#define TWENTYEIGHT_OVERCURRENT_COUNTER_MAX	 25
+#define BACKFEED_COUNTER_MAX		         25          //
+#define IBATT_COUNTER_MAX			         25          //
 
 #define CTRL_CAN_TIMEOUT					1000		// time in mS with no CAN message from controller before declaring comms invalid
 
