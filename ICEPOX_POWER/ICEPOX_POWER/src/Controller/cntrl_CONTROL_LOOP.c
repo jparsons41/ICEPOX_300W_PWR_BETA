@@ -488,9 +488,13 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 
 
 	VSet_DAC_mV = set_v_cmd_mV;	// sets the DC/DC output voltage based on CAN command for all states
-	//ISet_DAC_mA = 24999; //set_i_cmd_mA;	// sets the DC/DC output current limit based on CAN command for all states	// lmp - this was already hard coded to 24999 9/26/2018
+	ISet_DAC_mA = 24999; //set_i_cmd_mA;	// sets the DC/DC output current limit based on CAN command for all states	// lmp - this was already hard coded to 24999 9/26/2018
 	
 
+	/*
+	// This section allows voltage to droop from DC-DC based on instantaneous engine speed to allow larger capacitive loads
+	//Works instead of "ISet_DAC_mA" value above
+	//UNTESTED!! 2-25-2020  DSp
 	float32_t set_current = (1.1765 * AltUnregVmon_mV) - 11176;
 	
 	if (set_current < 18000) ISet_DAC_mA = 18000;
@@ -498,7 +502,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	else if (set_current > 24999) ISet_DAC_mA = 24999;  // 24999 is the max value that we can command
 	
 	else ISet_DAC_mA = set_current;
-	
+	*/
 
 
 
