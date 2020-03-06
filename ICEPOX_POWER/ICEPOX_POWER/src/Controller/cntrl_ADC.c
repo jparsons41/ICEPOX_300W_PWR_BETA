@@ -89,9 +89,8 @@ struct adc_module adc_instance;
 	 
 	 uint32_t adc_status = adc_get_status(module);
 	 
-	 enum status_code job_status = adc_get_job_status(module, ADC_JOB_READ_BUFFER);
-	 
-	 if (!((adc_status & ADC_STATUS_OVERRUN) || !(adc_status & ADC_STATUS_RESULT_READY) || (job_status | 0xF0))) {
+		 
+	if ((adc_status & ADC_STATUS_RESULT_READY)) {
 		 
 		 //get data from ADC results buffer, and store in FIFO Queue
 		 adc_q_data.cnt++;   /*never ending 32-bit counter*/
@@ -111,7 +110,7 @@ struct adc_module adc_instance;
 		 /*these are all in raw counts, and will be scaled when used in the control loop*/
 		 gbl_AnalogIn.ain0_DCDCImon					= adc_result_buffer[0];
 		 gbl_AnalogIn.ain1_DCDCVmon					= adc_result_buffer[1];
-		 gbl_AnalogIn.ain2_ILoadMeas					= adc_result_buffer[2];
+		 gbl_AnalogIn.ain2_ILoadMeas				= adc_result_buffer[2];
 		 gbl_AnalogIn.ain3_IShortMeas				= adc_result_buffer[3];
 		 gbl_AnalogIn.ain4_IBattery					= adc_result_buffer[4];
 		 gbl_AnalogIn.ain5_VBattery					= adc_result_buffer[5];
