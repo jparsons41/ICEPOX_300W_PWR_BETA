@@ -90,13 +90,13 @@ struct adc_module adc_instance;
 	 uint32_t adc_status = adc_get_status(module);
 	 
 		 
-	if ((adc_status & ADC_STATUS_RESULT_READY)) {
+	if (!(adc_status & ADC_STATUS_OVERRUN)) {
 		 
 		 //get data from ADC results buffer, and store in FIFO Queue
 		 adc_q_data.cnt++;   /*never ending 32-bit counter*/
 		 adc_q_data.adc_data.ain0_DCDCImon.cnts		=  adc_result_buffer[0];
 		 adc_q_data.adc_data.ain1_DCDCVmon.cnts		=  adc_result_buffer[1];
-		 adc_q_data.adc_data.ain2_ILoadMeas.cnts		=  adc_result_buffer[2];
+		 adc_q_data.adc_data.ain2_ILoadMeas.cnts	=  adc_result_buffer[2];
 		 adc_q_data.adc_data.ain3_IShortMeas.cnts	=  adc_result_buffer[3];
 		 adc_q_data.adc_data.ain4_IBattery.cnts		=  adc_result_buffer[4];
 		 adc_q_data.adc_data.ain5_VBattery.cnts		=  adc_result_buffer[5];
