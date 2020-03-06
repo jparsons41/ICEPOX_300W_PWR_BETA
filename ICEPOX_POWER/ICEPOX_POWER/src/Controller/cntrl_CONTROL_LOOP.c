@@ -166,6 +166,10 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	//uint16_t	ain6_AltUnregVmon_mv		= 	ADC_RAW_TO_MV(gbl_AnalogIn.ain6_AltUnregVmon);	/*PA06_ALT_Unreg_Vmon cnts->mv*/
 	//uint16_t	ain7_Thermistor_mv			= 	ADC_RAW_TO_MV(gbl_AnalogIn.ain7_Thermistor);	/*PA07_Thermistor cnt->mv*/
 
+
+	static uint16_t ILoadMeas_mA_last = 0;
+	ILoadMeas_mA_last = ILoadMeas_mA;
+	
 	//data scaled
 	DCDCImon_mA					=	limit_int(DCDC_IMON_COUNT_TO_MV(gbl_AnalogIn.ain0_DCDCImon),	0,	30000);							/*PA02_DCDC_Imon cnt->mA*/
 	DCDCVmon_mV					= 	limit_int(DCDC_VMON_COUNT_TO_MV(gbl_AnalogIn.ain1_DCDCVmon),	0,	35000);							/*PA03_DCDC_Vmon cnt->mV*/
@@ -175,6 +179,22 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	VBattery_mV					= 	limit_int(BATV_VMON_COUNT_TO_MV(gbl_AnalogIn.ain5_VBattery),	0,	20000);							/*PA05_Bat_Vmon cnt->mV*/
 	AltUnregVmon_mV				= 	limit_int(ALTV_VMON_COUNT_TO_MV(gbl_AnalogIn.ain6_AltUnregVmon),0,	60000);							/*PA06_ALT_Unreg_Vmon cnt->mV*/
 	Thermistor_C				= 	0;//THERM_MV_TO_DEGC(ain7_Thermistor_mv);															/*PA07_Thermistor cnt->degC * 100 */
+	
+	
+	static uint8_t zero_counter = 0;
+	
+	if (ILoadMeas_mA == 0) {
+		if (zero_counter < 5) {
+			ILoadMeas_mA = ILoadMeas_mA_last;
+			zero_counter++;
+		}
+		else {
+			zero_counter = 5;
+		}
+	}
+	else {
+		zero_counter = 0;
+	}
 
 
 	//static uint16_t incr = 0;		// lmp used to printf for debugging

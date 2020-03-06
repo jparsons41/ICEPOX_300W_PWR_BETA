@@ -102,9 +102,10 @@ struct adc_module adc_instance;
 		 adc_q_data.adc_data.ain5_VBattery.cnts		=  adc_result_buffer[5];
 		 adc_q_data.adc_data.ain6_AltUnregVmon.cnts	=  adc_result_buffer[6];
 		 adc_q_data.adc_data.ain7_Thermistor.cnts	=  adc_result_buffer[7];
+		 
 
 		 /*load the adc q*/
-		 adc_q_putItem(&adc_queue, adc_q_data);
+		 //adc_q_putItem(&adc_queue, adc_q_data);
 
 		 /*store the latest sample in the global structure*/
 		 /*these are all in raw counts, and will be scaled when used in the control loop*/
