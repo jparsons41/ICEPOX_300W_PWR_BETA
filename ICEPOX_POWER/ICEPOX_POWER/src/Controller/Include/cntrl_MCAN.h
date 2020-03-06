@@ -43,7 +43,7 @@
 #define MCAN_TX_MSG_POWER_STATUS							0x31		/*this is ID of POWER_STATUS message*/
 #define MCAN_TX_MSG_LEN										8			/*this the length used for above messages*/
 
-#define MCAN_TX_MSDELAY										4			/*this set the frequency in ms of CAN TX messages to controller*/
+#define MCAN_TX_MSDELAY										10			//(msec)*this set the frequency in ms of CAN TX messages to controller*/
 
 /*message filter range for incoming MCAN message, FIFO 1 & 2 */
 /*for now, these are totally arbitrary, and since this will be a closed*
