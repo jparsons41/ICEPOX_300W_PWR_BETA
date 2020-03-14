@@ -1,5 +1,6 @@
 #include "cntrl_MOTOR.h"
 #include "cntrl_DISCRETE_IO.h"
+#include "cntrl_GLOBALS.h"
 
 
 static void motor_send_msg(uint8_t *, uint32_t);
@@ -148,6 +149,7 @@ void motor_set_demand_input(uint16_t demand_input) {
 void step(){
 	static uint8_t startupCount = 0;
 	if(run == 1){
+		gbl_PwrStatusFlags.motor_on = 1;
 		if(startupCount == 0)
 		{
 			port_pin_set_output_level(LIN_PIN, LIN_PIN_INACTIVE);  // LIN pin: 0
@@ -175,6 +177,8 @@ void step(){
 		}
 	}
 	else {
+		
+		gbl_PwrStatusFlags.motor_on = 0;
 		vTaskDelay(pdMS_TO_TICKS(1000));  // delay waiting for sleep
 		static uint8_t goToSleep[2] = {0xdd, 0x15};
 		motor_send_msg(&goToSleep[0], 1);  // GTS: 0

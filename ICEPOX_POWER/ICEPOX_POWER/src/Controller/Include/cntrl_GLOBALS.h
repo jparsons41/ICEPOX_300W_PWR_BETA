@@ -86,7 +86,7 @@ struct statusFlagType {
 	uint8_t			load_tripped;				/*Bit 1 - 1-tripped, 0-not tripped*/
 	uint8_t			sw_status;					/*Bit 2 - 1-on, 0-off*/	
 	uint8_t			auto_man;					/*Bit 3 - 1 - AUTO, 0 - MANUAL */	
-	uint8_t			resv_4;						/*Bit 4 - reserved*/	
+	uint8_t			motor_on;						/*Bit 4 - reserved*/	
 	uint8_t			resv_5;						/*Bit 5 - reserved*/	
 	uint8_t			flt_battOpen;				/*Bit 6 - reserved*/	
 	uint8_t			flt_battOvervolt;			/*Bit 7 - reserved*/										
