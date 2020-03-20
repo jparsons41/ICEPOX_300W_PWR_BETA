@@ -8,10 +8,10 @@ static void motor_configure_registers(void);
 static void motor_set_gains(void);
 static void motor_set_run_bit(uint8_t);
 
-static const uint8_t STARTUP_COUNT_LIMIT = 1000; //  was "10"...What is this...If this is 10 then the system stops even after a successuful cranking event???
-static const uint8_t RPM_CHECK_TIME = 7; // usually 7 in "Tim's" constant current control
+static const uint8_t STARTUP_COUNT_LIMIT = 200; //  Clancy's transition time, but new use is timeout for no RPM
+static const uint8_t RPM_CHECK_TIME = 18; // usually 7 in "Tim's" constant current control, now 18 at 100 Hz cycle time
 static const uint16_t STARTUP_SPEED = 1023; //startup speed is actually "demand" it is only "speed" in speed control mode
-static const uint16_t SUCCESSFUL_STARTUP_RPM = 1000;
+static const uint16_t SUCCESSFUL_STARTUP_RPM = 1000;  // was Clancy's "transition speed"
 static uint16_t actualRpm;
 static bool run = false;
 
@@ -145,7 +145,7 @@ void motor_set_demand_input(uint16_t demand_input) {
 	motor_send_msg(&demandInputBuffer[0], 1);
 }
 
-
+// Main Motor control statement
 void step(){
 	static uint8_t startupCount = 0;
 	if(run == 1){
@@ -160,25 +160,29 @@ void step(){
 			motor_set_run_bit(1);
 			motor_set_demand_input(STARTUP_SPEED);
 		}
-		else if (startupCount >= RPM_CHECK_TIME && actualRpm < SUCCESSFUL_STARTUP_RPM)
+		else if (startupCount >= RPM_CHECK_TIME && actualRpm < SUCCESSFUL_STARTUP_RPM)   //Restart if RPM is not achieved in time
 		{
 			motor_set_demand_input(0);
 			startupCount = 0;
 			return;
 		}
-		else if (startupCount == STARTUP_COUNT_LIMIT)
+		else if (actualRpm > 0) {		//New 3/2020
+			startupCount = 1;	// keeps status consistent if spinning, no need to resend, and keeps counter low
+		}
+/*		else if (startupCount == STARTUP_COUNT_LIMIT)	//Startup_COUNT_LIMIT is the time to transition.  Set Steady State config values if time was right, obsolete if both config-sets are same
 		{
 			motor_send_msg(&steadyStateRegisterConfigurationValues[0], 31);
 			motor_set_demand_input(STARTUP_SPEED);
 		}
-		
-		if(startupCount <= STARTUP_COUNT_LIMIT){
-			startupCount++;
+*/		
+		if(startupCount <= STARTUP_COUNT_LIMIT && actualRpm == 0) {
+			startupCount++;		//related to clock speed, count limit must be updated
 		}
 	}
 	else {
 		
 		gbl_PwrStatusFlags.motor_on = 0;
+		motor_set_run_bit(0);	// faster Allegro shutoff  3/2020
 		vTaskDelay(pdMS_TO_TICKS(1000));  // delay waiting for sleep
 		static uint8_t goToSleep[2] = {0xdd, 0x15};
 		motor_send_msg(&goToSleep[0], 1);  // GTS: 0
@@ -192,7 +196,6 @@ void step(){
 		startupCount = 0;
 	}
 }
-
 void motor_task(void *p) {
 	UNUSED(p);
 
