@@ -182,15 +182,15 @@ void step(){
 		
 		gbl_PwrStatusFlags.motor_on = 0;
 		motor_set_run_bit(0);			// no reason to wait for the command to stop.
-		vTaskDelay(pdMS_TO_TICKS(200));  // delay waiting for sleep  (DSp, no reason to delay a whole sec?)
+		vTaskDelay(pdMS_TO_TICKS(200));  // delay waiting for sleep  (DSp, no reason to delay at all, nevermind a whole sec?)
 		static uint8_t goToSleep[2] = {0xdd, 0x15};
 		motor_send_msg(&goToSleep[0], 1);  // GTS: 0
-		vTaskDelay(pdMS_TO_TICKS(200));  // delay waiting for sleep  
+		vTaskDelay(pdMS_TO_TICKS(200));  // delay waiting for sleep  (maybe needs 150 usec?)
 		goToSleep[0] = 0xdd;
 		goToSleep[1] = 0x94;
 		motor_send_msg(&goToSleep[0], 1);  // GTS: 1
 		vTaskDelay(pdMS_TO_TICKS(100));  // delay waiting for sleep
-		port_pin_set_output_level(LIN_PIN, LIN_PIN_ACTIVE);  // LIN pin: 1
+		port_pin_set_output_level(LIN_PIN, LIN_PIN_ACTIVE);  // LIN pin: 1		should be done first, has lowest delay)
 		motor_set_run_bit(0); // this should be ignored since asleep
 		startupCount = 0;
 	}
