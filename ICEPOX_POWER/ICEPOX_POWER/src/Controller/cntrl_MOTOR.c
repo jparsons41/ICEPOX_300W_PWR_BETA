@@ -9,7 +9,7 @@ static void motor_set_gains(void);
 static void motor_set_run_bit(uint8_t);
 
 static const uint8_t STARTUP_COUNT_LIMIT = 1000; //  was "10"...What is this...If this is 10 then the system stops even after a successuful cranking event???
-static const uint8_t RPM_CHECK_TIME = 7; // usually 7 in "Tim's" constant current control
+static const uint8_t RPM_CHECK_TIME = 18; // usually 7 in "Tim's" constant current control (2.5x in 100Hz vs 40 Hz)
 static const uint16_t STARTUP_SPEED = 1023; //startup speed is actually "demand" it is only "speed" in speed control mode
 static const uint16_t SUCCESSFUL_STARTUP_RPM = 1000;
 static uint16_t actualRpm;
@@ -153,40 +153,43 @@ void step(){
 		if(startupCount == 0)
 		{
 			port_pin_set_output_level(LIN_PIN, LIN_PIN_INACTIVE);  // LIN pin: 0
-			vTaskDelay(pdMS_TO_TICKS(500));  // delay for wake up
+			vTaskDelay(pdMS_TO_TICKS(100));  // delay for wake up
 			port_pin_set_output_level(LIN_PIN, LIN_PIN_ACTIVE);  // LIN pin: 1
-			vTaskDelay(pdMS_TO_TICKS(500));  // delay for wake up
+			vTaskDelay(pdMS_TO_TICKS(150));  // delay for wake up
 			motor_configure_registers();
 			motor_set_run_bit(1);
 			motor_set_demand_input(STARTUP_SPEED);
 		}
 		else if (startupCount >= RPM_CHECK_TIME && actualRpm < SUCCESSFUL_STARTUP_RPM)
 		{
+			motor_set_run_bit(0);
 			motor_set_demand_input(0);
 			startupCount = 0;
 			return;
 		}
-		else if (startupCount == STARTUP_COUNT_LIMIT)
+		/*else if (startupCount == STARTUP_COUNT_LIMIT)			//no need for this "transition config" section if values in STEADY are same as START
 		{
 			motor_send_msg(&steadyStateRegisterConfigurationValues[0], 31);
 			motor_set_demand_input(STARTUP_SPEED);
 		}
-		
-		if(startupCount <= STARTUP_COUNT_LIMIT){
+		*/
+		if(startupCount <= STARTUP_COUNT_LIMIT && actualRpm < SUCCESSFUL_STARTUP_RPM){
 			startupCount++;
 		}
+		else if (actualRpm >= SUCCESSFUL_STARTUP_RPM) startupCount = 1;		// allows startup count to stay low if actually spinning (smoothing over zeros)
 	}
 	else {
 		
 		gbl_PwrStatusFlags.motor_on = 0;
-		vTaskDelay(pdMS_TO_TICKS(1000));  // delay waiting for sleep
+		motor_set_run_bit(0);			// no reason to wait for the command to stop.
+		vTaskDelay(pdMS_TO_TICKS(200));  // delay waiting for sleep  (DSp, no reason to delay a whole sec?)
 		static uint8_t goToSleep[2] = {0xdd, 0x15};
 		motor_send_msg(&goToSleep[0], 1);  // GTS: 0
-		vTaskDelay(pdMS_TO_TICKS(1000));  // delay waiting for sleep
+		vTaskDelay(pdMS_TO_TICKS(200));  // delay waiting for sleep  
 		goToSleep[0] = 0xdd;
 		goToSleep[1] = 0x94;
 		motor_send_msg(&goToSleep[0], 1);  // GTS: 1
-		vTaskDelay(pdMS_TO_TICKS(500));  // delay waiting for sleep
+		vTaskDelay(pdMS_TO_TICKS(100));  // delay waiting for sleep
 		port_pin_set_output_level(LIN_PIN, LIN_PIN_ACTIVE);  // LIN pin: 1
 		motor_set_run_bit(0); // this should be ignored since asleep
 		startupCount = 0;
