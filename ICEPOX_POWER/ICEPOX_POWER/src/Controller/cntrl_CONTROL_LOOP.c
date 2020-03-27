@@ -679,7 +679,7 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	gbl_PwrStatusFlags.load_tripped		= load_tripped_state;							/*Bit 1 - 1-tripped, 0-not tripped*/
 	gbl_PwrStatusFlags.sw_status		= sw_status_state;								/*Bit 2 - 1-on, 0-off*/
 	gbl_PwrStatusFlags.auto_man			= auto_man_state;								/*Bit 3 - 1 - AUTO, 0 - MANUAL */
-	gbl_PwrStatusFlags.motor_on			= 0;											/*Bit 4 - reserved*/
+	//gbl_PwrStatusFlags.motor_on			= 0;											/*Bit 4 - reserved*/  commented out so it can be assigned in MOTOR file
 	gbl_PwrStatusFlags.resv_5			= 0;											/*Bit 5 - reserved*/
 	gbl_PwrStatusFlags.flt_battOpen		= battOpen_state;								/*Bit 6 - reserved*/
 	gbl_PwrStatusFlags.flt_battOvervolt	= battOvervolt_state;							/*Bit 7 - reserved*/
