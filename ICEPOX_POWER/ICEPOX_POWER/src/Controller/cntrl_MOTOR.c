@@ -148,7 +148,7 @@ void motor_set_demand_input(uint16_t demand_input) {
 
 void step(){
 	static uint8_t startupCount = 0;
-	if(run == 1 && gbl_DigInputs.sw_status == 1){
+	if((gbl_PwrCmd.motor != 0) && (gbl_DigInputs.sw_status == 1)){
 		gbl_PwrStatusFlags.motor_on = 1;
 		if(startupCount == 0)
 		{
