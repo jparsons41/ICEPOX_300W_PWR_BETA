@@ -542,10 +542,12 @@ uint16_t Vset_DAC_mV2cnt(uint16_t dcdc_mV) {
 	#if (PROCESS_UNDERVOLTAGE_TRIP_ENABLED)
 		if (gbl_DigInputs.uv_trip == 0) port_pin_set_output_level(OUTPUT_EN, OUT_output_en);							/*Output EN (OUTPUT),  PA27*/
 		else  port_pin_set_output_level(OUTPUT_EN, OUTPUT_EN_INACTIVE);							/*Output EN (OUTPUT),  PA27*/
+		load_tripped_state = gbl_DigInputs.uv_trip; // uv_trip is the only thing that has priority over the CAN message
 	#else
 		port_pin_set_output_level(OUTPUT_EN, OUT_output_en);							/*Output EN (OUTPUT),  PA27*/
 	#endif
 	port_pin_set_output_level(BATTERY_EN, OUT_battery_en);							/*Battery EN (OUTPUT), PB30 */
+	
 	
 	//  BATT CHARGE ENABLE
 	//port_pin_set_output_level(BATTERY_CHARGE_EN, BATTERY_CHARGE_EN_ACTIVE);					/*Battery RUN/CHARGE (OUTPUT), PB31 */
